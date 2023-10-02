@@ -1,0 +1,109 @@
+li {
+  cursor: pointer;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1/1;
+}
+
+textarea {
+  resize: none;
+}
+
+textarea::-webkit-scrollbar {
+  width: 5px;
+  height: 8px;
+  background-color: #f3f4f7;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: #2563eb;
+  border-radius: 4px;
+}
+
+#main-sec {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-areas: "aside1 main";
+}
+
+#aside1 {
+  grid-area: aside1;
+  position: fixed;
+  width: 25%;
+  height: 70%;
+  overflow-y: scroll;
+}
+
+#main-content {
+  grid-area: main;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+
+/* Animation */
+
+.fade {
+  animation: fade-in 1s;
+}
+
+.loading-left {
+  animation: loading-out 2s infinite;
+}
+
+.loading-right {
+  animation: loading-in 2s infinite;
+}
+
+@keyframes loading-out {
+  0% {
+    width: 0%;
+    background-color: rgb(169, 169, 169);
+  }
+  50% {
+    background-color: rgb(238, 238, 238);
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes loading-in {
+  0% {
+    width: 100%;
+    background-color: rgb(169, 169, 169);
+  }
+  50% {
+    background-color: rgb(238, 238, 238);
+  }
+
+  100% {
+    width: 0%;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  #main-sec {
+    display: block;
+  }
+
+  #aside1 {
+    position: relative;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+}
