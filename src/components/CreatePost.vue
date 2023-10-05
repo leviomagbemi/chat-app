@@ -9,37 +9,44 @@
     >
       <!--Profile image-->
       <div>
-        <div class="w-14 h-14 bg-gray-100 rounded-full" v-if="!userData.user">
+        <div class="w-14 h-14 bg-gray-100 rounded-full" v-if="!userStore.user">
           <!--loading profile image-->
         </div>
 
         <div class="w-14 h-14" v-else>
           <img
-            v-if="userData.user.gender === 'male' && userStore.profilePicture === ''"
+            v-if="userStore.profilePicture"
+            class="rounded-full"
+            :src="userStore.profilePicture"
+            i
+            alt=""
+          />
+
+          <img
+            v-if="userStore.user.gender === 'male' && userStore.profilePicture === ''"
             class="rounded-full"
             src="@/assets/avatar-male.jpg"
             i
             alt=""
           />
           <img
-            v-else-if="userData.user.gender === 'female' && userStore.profilePicture === ''"
+            v-else-if="userStore.user.gender === 'female' && userStore.profilePicture === ''"
             class="rounded-full"
             src="@/assets/avatar-male.jpg"
             i
             alt=""
           />
-          <img v-else class="rounded-full" :src="userStore.profilePicture" i alt="" />
         </div>
       </div>
 
       <!--user name-->
       <div class="flex-1">
-        <div v-if="!userData.user" class="h-5 w-full bg-gray-100 rounded">
+        <div v-if="!userStore.user.user" class="h-5 w-full bg-gray-100 rounded">
           <!--loading user name-->
         </div>
         <div v-else>
           <h4 class="text-sm font-bold">
-            {{ userData.user.firstName }} {{ userData.user.surname }}
+            {{ userStore.user.firstName }} {{ userStore.user.surname }}
           </h4>
         </div>
       </div>
@@ -125,7 +132,7 @@
 
 <script setup>
 import { useUserStore } from "@/stores/user.js";
-import { onBeforeMount, reactive, ref } from "vue";
+import { ref } from "vue";
 import { getStorage, ref as firebaseRef, uploadBytes } from "firebase/storage";
 import { getFirestore, setDoc, doc } from "firebase/firestore";
 import firebase from "@/includes/firebase";
@@ -141,12 +148,6 @@ const overlayHeight = ref(100);
 const textField = ref(null);
 
 const userStore = useUserStore();
-
-const userData = reactive({ user: null });
-
-onBeforeMount(async () => {
-  await userStore.userDocument(userData);
-});
 
 function loadImage(e) {
   images.value = e.target.files;
@@ -181,6 +182,7 @@ async function submitPost(e) {
       likes: [],
       user: userStore.uid,
       postID,
+      profile_id: userStore.user.profile_id,
       profilePicture: userStore.profilePicture,
       userName: `${userStore.user.firstName} ${userStore.user.surname}`,
       date: postDate.toLocaleDateString(),

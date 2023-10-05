@@ -3,12 +3,12 @@
     @toggleMenu="toggleMenu"
     class="sticky top-0 z-10"
     v-if="$route.path !== '/login' && $route.path !== '/register'"
-    :user="userData.user"
+    :user="userStore.user"
   />
   <AppMenu
     class="z-20 mx-auto right-12 top-20 fixed"
     v-if="menuStore.menuOpen"
-    :user="userData.user"
+    :user="userStore.user"
   />
   <RouterView @click="menuStore.menuOpen = false" />
 </template>
@@ -18,7 +18,7 @@ import AppHeader from "@/components/AppHeader.vue";
 import AppMenu from "@/components/AppMenu.vue";
 import { useMenuStore } from "@/stores/menu.js";
 import { useUserStore } from "@/stores/user.js";
-import { onBeforeMount, reactive } from "vue";
+import { onBeforeMount } from "vue";
 import { getStorage, ref as firebaseRef, getDownloadURL } from "firebase/storage";
 import { doc, getFirestore, getDoc } from "firebase/firestore";
 import firebase from "@/includes/firebase";
@@ -26,11 +26,9 @@ import firebase from "@/includes/firebase";
 const menuStore = useMenuStore();
 const userStore = useUserStore();
 
-const userData = reactive({ user: null });
-
 onBeforeMount(async () => {
   try {
-    await userStore.userDocument(userData);
+    await userStore.userDocument();
 
     const storage = getStorage();
     const db = getFirestore(firebase);

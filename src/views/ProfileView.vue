@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--Loading Content-->
-    <div class="p-5 flex-col flex gap-4 md:flex-row" v-if="!userData.user">
+    <div class="p-5 flex-col flex gap-4 md:flex-row" v-if="!userStore.user">
       <div class="w-40 h-40 relative mx-auto bg-gray-100 rounded">
         <!--loading Image-->
       </div>
@@ -25,14 +25,14 @@
       <!--Profile Image-->
       <div class="w-40 h-40 relative mx-auto">
         <img
-          v-if="userData.user.gender === 'male' && userStore.profilePicture === ''"
+          v-if="userStore.user.gender === 'male' && userStore.profilePicture === ''"
           class="rounded"
           src="@/assets/avatar-male.jpg"
           i
           alt=""
         />
         <img
-          v-else-if="userData.user.gender === 'female' && userStore.profilePicture === ''"
+          v-else-if="userStore.user.gender === 'female' && userStore.profilePicture === ''"
           class="rounded"
           src="@/assets/avatar-male.jpg"
           i
@@ -51,7 +51,7 @@
       <div class="bg-white p-3 rounded flex-1 gap-4 flex-col text-center md:flex-row md:text-left">
         <div>
           <h1 class="text-4xl font-semibold">
-            {{ userData.user.firstName }} {{ userData.user.surname }}
+            {{ userStore.user.firstName }} {{ userStore.user.surname }}
           </h1>
           <p class="text-lg my-3">Coding, Programming, web development</p>
           <!-- <button class="bg-blue-600 text-white p-2 rounded mr-3 hover:bg-blue-500">
@@ -85,23 +85,31 @@
   <UploadProfilePic v-if="uploadModal" @closeUploadModal="uploadModal = false" />
 
   <div class="w-full mx-auto md:max-w-3xl">
-    <Posts v-if="active === 'post'" />
+    <Posts
+      v-if="active === 'post'"
+      :posts="posts"
+      :loading="loading"
+      :profilePicture="userStore.profilePicture"
+    />
   </div>
 </template>
 
 <script setup>
 import UploadProfilePic from "@/components/UploadProfilePic.vue";
 import { useUserStore } from "@/stores/user.js";
-import { onBeforeMount, reactive, ref, computed } from "vue";
+import { usePostStore } from "@/stores/post.js";
+import { onBeforeMount, ref, computed } from "vue";
 import Posts from "@/components/Posts.vue";
 
 const userStore = useUserStore();
-const userData = reactive({ user: null });
 const uploadModal = ref(false);
 const active = ref("post");
+const postStore = usePostStore();
+const posts = ref([]);
+const loading = ref(false);
 
 onBeforeMount(async () => {
-  await userStore.userDocument(userData);
+  await postStore.getPosts(posts, loading);
 });
 
 const activeState = computed(() => {

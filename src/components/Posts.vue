@@ -1,6 +1,6 @@
 <template>
   <!--Loading Content-->
-  <article v-if="load" class="w-full p-5 flex flex-col gap-4">
+  <article v-if="props.loading" class="w-full p-5 flex flex-col gap-4">
     <!-- Loading content for individual post -->
     <div id="container">
       <div id="header" class="flex gap-2 items-center mb-3">
@@ -29,7 +29,7 @@
   <!--Main Post Content-->
   <article
     v-else
-    v-for="post in posts"
+    v-for="post in props.posts"
     :key="post.document.postID"
     class="w-full p-5 flex flex-col gap-4 rounded bg-gray-50 fade"
   >
@@ -37,7 +37,7 @@
       <!--post header-->
       <div id="header" class="flex gap-2 items-center mb-3">
         <div class="w-16 h-16">
-          <img :src="post.document.profilePicture" alt="" class="rounded-full" />
+          <img :src="props.profilePicture" alt="" class="rounded-full" />
         </div>
         <h4 class="flex-1 font-semibold">{{ post.document.userName }}</h4>
       </div>
@@ -83,56 +83,11 @@
     </div>
   </article>
 
-  <div v-if="!load && posts.length === 0">No Posts</div>
+  <div v-if="!props.loading && props.posts.length === 0">No Posts</div>
 </template>
 
 <script setup>
-// import { usePostStore } from "@/stores/posts.js";
-import { ref, onBeforeMount } from "vue";
-import { useUserStore } from "@/stores/user.js";
-import { getFirestore, getDocs, collection, orderBy, query } from "firebase/firestore";
-import { getStorage, ref as firebaseRef, getDownloadURL, listAll } from "firebase/storage";
-
-import firebase from "@/includes/firebase";
-
-const userStore = useUserStore();
-const posts = ref([]);
-const load = ref(false);
-
-onBeforeMount(async () => {
-  load.value = true;
-  const db = getFirestore(firebase);
-  const storage = getStorage();
-
-  const ref = query(collection(db, "posts"), orderBy("time", "desc"));
-  // const snapshot = await getDocs(ref);
-  const snapshot = await getDocs(ref);
-
-  for (let doc of snapshot.docs) {
-    const document = doc.data();
-
-    if (userStore.uid === document.user) {
-      const images = [];
-      console.log(document);
-
-      const storageRef = firebaseRef(storage, `${userStore.uid}/posts/${document.postID}`);
-
-      const lists = (await listAll(storageRef)).items;
-
-      const allLists = Array.from(lists);
-
-      for (let list of allLists) {
-        await getDownloadURL(list).then((url) => {
-          images.push(url);
-        });
-      }
-
-      posts.value.push({ document, images });
-    }
-  }
-
-  load.value = false;
-});
+const props = defineProps(["posts", "loading", "profilePicture"]);
 </script>
 
 <style scoped>

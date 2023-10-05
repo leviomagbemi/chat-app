@@ -29,6 +29,11 @@ const routes = [
     component: () => import("@/views/FriendsView.vue")
   },
   {
+    path: "/friends/discover/:profile_id",
+    name: "discover-profile",
+    component: () => import("@/views/UserProfileView.vue")
+  },
+  {
     path: "/:catchAll(.*)*",
     redirect: "login"
   }

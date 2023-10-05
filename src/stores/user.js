@@ -23,6 +23,8 @@ export const useUserStore = defineStore("user", {
 
       const userCred = getAuth();
 
+      const profile_id = Math.random().toString(16).slice(2);
+
       const createUser = await createUserWithEmailAndPassword(
         userCred,
         values.email,
@@ -35,7 +37,8 @@ export const useUserStore = defineStore("user", {
         email: values.email,
         dob: values.dob,
         gender: values.gender,
-        user: createUser.user.uid
+        user: createUser.user.uid,
+        profile_id
       });
     },
 
@@ -62,7 +65,7 @@ export const useUserStore = defineStore("user", {
       });
     },
 
-    async userDocument(userData) {
+    async userDocument() {
       await this.checkUser();
 
       const db = getFirestore(firebase);
@@ -71,7 +74,6 @@ export const useUserStore = defineStore("user", {
 
       const snapshot = await getDoc(ref);
       if (snapshot.exists() && this.userLoggedIn) {
-        userData.user = snapshot.data();
         this.user = snapshot.data();
       } else {
         console.log("No such document");
