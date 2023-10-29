@@ -4,7 +4,7 @@
       class="grid grid-cols-3 gap-3 items-center p-5 h-auto w-full mx-auto md:p-0 md:max-w-screen-lg md:h-28 min-[768px]:px-3"
     >
       <div id="logo" class="text-4xl font-bold order-first col-span-2 md:col-span-1">ChatAPP.</div>
-      <AppNav />
+      <AppNav :friends="friends" :notifications="notifications" />
 
       <!--avatar-->
       <div id="avatar" class="justify-self-end" @click="$emit('toggleMenu')">
@@ -42,6 +42,6 @@
 import AppNav from "./AppNav.vue";
 import { useUserStore } from "@/stores/user";
 
-const props = defineProps(["user"]);
+const props = defineProps(["user", "friends", "notifications"]);
 const userStore = useUserStore();
 </script>

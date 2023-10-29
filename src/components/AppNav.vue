@@ -6,7 +6,7 @@
           <i class="fas fa-users text-2xl relative"
             ><span
               class="absolute inline-block w-5 h-5 text-sm rounded-full bg-red-500 text-center align-center bottom-6 right-px"
-              >0</span
+              >{{ friends }}</span
             ></i
           >Friends
         </li>
@@ -24,16 +24,20 @@
           > </i
         >Chats
       </li>
-      <li class="flex flex-col items-center hover:bg-blue-400 px-3 py-5 rounded-md">
-        <i class="fas fa-bell text-2xl relative">
-          <span
-            class="absolute inline-block w-5 h-5 text-sm rounded-full bg-red-500 text-center align-center bottom-6 right-px"
-            >0</span
-          > </i
-        >Notification
-      </li>
+      <router-link :to="{ name: 'notifications' }">
+        <li class="flex flex-col items-center hover:bg-blue-400 px-3 py-5 rounded-md">
+          <i class="fas fa-bell text-2xl relative">
+            <span
+              class="absolute inline-block w-5 h-5 text-sm rounded-full bg-red-500 text-center align-center bottom-6 right-px"
+              >{{ notifications }}</span
+            > </i
+          >Notification
+        </li>
+      </router-link>
     </ul>
   </nav>
 </template>
 
-<script setup></script>
+<script setup>
+defineProps(["friends", "notifications"]);
+</script>

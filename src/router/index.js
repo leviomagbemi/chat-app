@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useMenuStore } from "../stores/menu";
+import { useUserStore } from "../stores/user";
 
 const routes = [
   {
@@ -34,6 +35,11 @@ const routes = [
     component: () => import("@/views/UserProfileView.vue")
   },
   {
+    path: "/notifications",
+    name: "notifications",
+    component: () => import("@/views/NotificationsView.vue")
+  },
+  {
     path: "/:catchAll(.*)*",
     redirect: "login"
   }
@@ -47,10 +53,15 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const store = useMenuStore();
+  // const user = useUserStore();
 
   if (store.menuOpen) {
     store.menuOpen = false;
   }
+
+  // if (!user.userLoggedIn) {
+  //   router.push("/login");
+  // }
 
   next();
 });

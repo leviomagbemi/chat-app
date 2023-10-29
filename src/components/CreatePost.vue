@@ -45,7 +45,7 @@
           <!--loading user name-->
         </div>
         <div v-else>
-          <h4 class="text-sm font-bold">
+          <h4 class="text-xl font-semibold">
             {{ userStore.user.firstName }} {{ userStore.user.surname }}
           </h4>
         </div>
@@ -176,15 +176,12 @@ async function submitPost(e) {
     const postID = Math.random().toString(16).slice(2);
     const postDate = new Date();
 
-    await setDoc(doc(db, "posts", `${userStore.uid}.${postID}`), {
+    await setDoc(doc(db, "posts", `${postID}`), {
       text,
       comments: [],
       likes: [],
-      user: userStore.uid,
+      userID: userStore.uid,
       postID,
-      profile_id: userStore.user.profile_id,
-      profilePicture: userStore.profilePicture,
-      userName: `${userStore.user.firstName} ${userStore.user.surname}`,
       date: postDate.toLocaleDateString(),
       time: postDate.toLocaleTimeString()
     });

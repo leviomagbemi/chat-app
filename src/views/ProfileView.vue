@@ -53,28 +53,21 @@
           <h1 class="text-4xl font-semibold">
             {{ userStore.user.firstName }} {{ userStore.user.surname }}
           </h1>
-          <p class="text-lg my-3">Coding, Programming, web development</p>
-          <!-- <button class="bg-blue-600 text-white p-2 rounded mr-3 hover:bg-blue-500">
-          <i class="fas fa-message"></i> Send Message
-        </button> -->
-          <button class="bg-blue-600 text-white p-2 rounded hover:bg-blue-500">
+          <p class="text-lg my-3">{{ userStore.user.bio }}</p>
+
+          <button
+            class="bg-blue-600 text-white p-2 rounded hover:bg-blue-500"
+            @click.prevent="editProfile = true"
+          >
             <i class="fas fa-edit"></i> Edit Profile
           </button>
         </div>
-
-        <!-- <div class="flex-1 self-center text-center">
-        <span class="bg-gray-200 p-5 mr-3 rounded font-semibold cursor-pointer">Friends: 400</span>
-        <button class="bg-blue-600 text-white p-4 rounded hover:bg-blue-500">
-          Add Friend <i class="fas fa-user-plus"></i>
-        </button>
-      </div> -->
 
         <!--Navigation-->
         <hr class="my-3" />
         <div>
           <ul class="flex gap-5 justify-center">
             <li :class="active === 'post' ? activeState : ''">Post</li>
-            <li :class="active === 'photos' ? activeState : ''">Photos</li>
             <li :class="active === 'friends' ? activeState : ''">Friends</li>
           </ul>
         </div>
@@ -84,18 +77,32 @@
 
   <UploadProfilePic v-if="uploadModal" @closeUploadModal="uploadModal = false" />
 
+  <EditProfile
+    :editProfile="editProfile"
+    class="absolute top-16 left-2/4 z-20"
+    style="transform: translateX(-50%)"
+    @closeEditModal="editProfile = false"
+  />
+  <div v-if="editProfile" class="bg-white opacity-50 w-full h-full fixed top-0 z-10"></div>
+
   <div class="w-full mx-auto md:max-w-3xl">
-    <Posts
-      v-if="active === 'post'"
-      :posts="posts"
-      :loading="loading"
-      :profilePicture="userStore.profilePicture"
-    />
+    <div v-if="active === 'post'">
+      <Posts
+        v-for="post in posts"
+        :key="post.postID"
+        :post="post"
+        :loading="loading"
+        :profilePicture="userStore.profilePicture"
+        :firstName="userStore.user.firstName"
+        :surname="userStore.user.surname"
+      />
+    </div>
   </div>
 </template>
 
 <script setup>
 import UploadProfilePic from "@/components/UploadProfilePic.vue";
+import EditProfile from "@/components/EditProfile.vue";
 import { useUserStore } from "@/stores/user.js";
 import { usePostStore } from "@/stores/post.js";
 import { onBeforeMount, ref, computed } from "vue";
@@ -107,9 +114,10 @@ const active = ref("post");
 const postStore = usePostStore();
 const posts = ref([]);
 const loading = ref(false);
+const editProfile = ref(false);
 
 onBeforeMount(async () => {
-  await postStore.getPosts(posts, loading);
+  await postStore.getPosts(posts, loading, userStore);
 });
 
 const activeState = computed(() => {

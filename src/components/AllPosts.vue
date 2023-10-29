@@ -87,6 +87,7 @@
 import { computed } from "vue";
 
 const props = defineProps(["post", "loading", "profilePicture", "firstName", "surname"]);
+
 const postDate = computed(() => {
   const monthsOfYear = [
     "January",

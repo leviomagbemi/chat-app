@@ -22,19 +22,27 @@
       >
       <input
         type="file"
-        accept="image/png, image/jpeg, image/jpg"
         id="dp"
-        class="hidden"
-        @change.prevent="loadFile"
+        multiple
+        accept=".jpg, .jpeg, .png"
+        class="visually-hidden"
+        name="images"
+        @change="loadFile"
       />
     </div>
     <div class="text-center px-5">
+      <!--Photo Preview-->
       <div class="my-3">
-        <p><span class="font-semibold">File:</span> {{ fileName }}</p>
+        <div class="w-20 h-20 mx-auto my-3" v-for="(image, index) in thumbnail" :key="index">
+          <img :src="image" alt="" class="w-full grid-item" />
+        </div>
       </div>
+      <!--Progress bar-->
       <div class="w-full h-5 bg-gray-200 rounded-xl mb-3">
         <div class="bg-blue-400 h-5 rounded-xl" :style="{ width: progress + '%' }"></div>
       </div>
+
+      <!--Upload button-->
       <button
         class="bg-blue-600 px-5 py-3 text-white rounded font-semibold hover:bg-blue-800"
         @click.prevent="upload"
@@ -58,8 +66,9 @@ import firebase from "@/includes/firebase";
 import { useUserStore } from "@/stores/user";
 
 const file = ref({});
-const fileName = ref("");
 const fileRef = ref(null);
+const images = ref([]);
+const thumbnail = ref([]);
 const progress = ref(0);
 const userStore = useUserStore();
 
@@ -69,18 +78,28 @@ onBeforeMount(async () => {
   await userStore.checkUser();
 });
 
-async function loadFile(e) {
+// function loadImage(e) {
+
+//   loadFile(e);
+// }
+
+function loadFile(e) {
   try {
     file.value = e.target.files[0];
 
+    //image preview
+    images.value = e.target.files;
+    const thumbnailImages = Array.from(images.value);
+
+    for (let image of thumbnailImages) {
+      const objectUrl = URL.createObjectURL(image);
+      thumbnail.value.push(objectUrl);
+    }
+
     const storage = getStorage();
 
-    fileRef.value = firebaseRef(
-      storage,
-      `${userStore.uid}/profile-pictures/${e.target.files[0].name}`
-    );
+    fileRef.value = firebaseRef(storage, `${userStore.uid}/profile-pictures/${file.value.name}`);
 
-    fileName.value = e.target.files[0].name;
     console.log(fileRef.value._location.path_);
   } catch (error) {
     console.log(error);
