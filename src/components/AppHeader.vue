@@ -45,3 +45,10 @@ import { useUserStore } from "@/stores/user";
 const props = defineProps(["user", "friends", "notifications"]);
 const userStore = useUserStore();
 </script>
+
+<style scoped>
+img {
+  width: 100%;
+  height: 100%;
+}
+</style>

@@ -51,9 +51,9 @@ const router = createRouter({
   linkExactActiveClass: "bg-blue-400 rounded"
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const store = useMenuStore();
-  // const user = useUserStore();
+  const user = useUserStore();
 
   if (store.menuOpen) {
     store.menuOpen = false;

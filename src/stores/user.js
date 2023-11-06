@@ -50,7 +50,7 @@ export const useUserStore = defineStore("user", {
       this.userLoggedIn = true;
     },
 
-    async checkUser() {
+    async checkUser(router) {
       await new Promise((resolve, reject) => {
         getAuth().onAuthStateChanged((user) => {
           if (user) {
@@ -59,14 +59,15 @@ export const useUserStore = defineStore("user", {
             resolve();
           } else {
             this.userLoggedIn = false;
+            router.push("/login");
             reject();
           }
         });
       });
     },
 
-    async userDocument() {
-      await this.checkUser();
+    async userDocument(router) {
+      await this.checkUser(router);
 
       const db = getFirestore(firebase);
 

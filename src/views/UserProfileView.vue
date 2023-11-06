@@ -108,7 +108,6 @@
         <div>
           <ul class="flex gap-5 justify-center">
             <li :class="active === 'post' ? activeState : ''">Post</li>
-            <li :class="active === 'photos' ? activeState : ''">Photos</li>
             <li :class="active === 'friends' ? activeState : ''">Friends</li>
           </ul>
         </div>

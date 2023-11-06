@@ -49,19 +49,38 @@
       <div class="max-w-lg mb-3 mx-auto" v-if="post.images">
         <div v-if="post.images.length > 1" class="photo-grid">
           <div v-for="(image, index) in post.images" :key="index" class="grid-item">
-            <img :src="image" alt="" />
+            <img
+              :src="image"
+              alt=""
+              @click.prevent="
+                (viewImagesStore.images = post.images),
+                  (viewImagesStore.viewImages = true),
+                  console.log('yes')
+              "
+            />
           </div>
+        </div>
+        <div class="w-full">
           <button
             v-if="post.images.length > 4"
-            class="bg-blue-600 text-white my-3 p-2 rounded col-span-2"
+            class="bg-blue-600 text-white my-3 p-2 rounded col-span-2 w-full"
+            @click.prevent="
+              (viewImagesStore.images = post.images), (viewImagesStore.viewImages = true)
+            "
           >
             View More
           </button>
         </div>
-
-        <div v-else>
+        <div v-if="post.images.length === 1">
           <div v-for="(image, index) in post.images" :key="index" class="single-picture">
-            <img :src="image" alt="" />
+            <img
+              :src="image"
+              alt=""
+              class="single-picture"
+              @click.prevent="
+                (viewImagesStore.images = post.images), (viewImagesStore.viewImages = true)
+              "
+            />
           </div>
         </div>
       </div>
@@ -85,6 +104,9 @@
 
 <script setup>
 import { computed } from "vue";
+
+import { useViewImagesStore } from "@/stores/viewImages";
+const viewImagesStore = useViewImagesStore();
 
 const props = defineProps(["post", "loading", "profilePicture", "firstName", "surname"]);
 const postDate = computed(() => {
@@ -154,5 +176,21 @@ const postTime = computed(() => {
   width: 100%;
   height: 100%;
   object-fit: cover; /* Crop and scale images to fit the grid item */
+}
+
+@media (max-width: 600px) {
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Adjust the minimum and maximum width as needed */
+    gap: 0.5rem; /* Adjust the gap between images as needed */
+  }
+}
+
+@media (max-width: 300px) {
+  .photo-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
 </style>

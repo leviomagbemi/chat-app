@@ -1,7 +1,7 @@
 <template>
-  <section class="pt-5 px-5" id="main-sec">
+  <section class="pt-5 px-5 max-[600px]:px-3" id="main-sec">
     <CreatePost />
-    <main class="bg-white rounded p-5" id="main-content">
+    <main class="bg-white rounded" id="main-content">
       <AllPosts
         v-for="post in posts"
         :key="post.postID"
@@ -13,19 +13,22 @@
       />
     </main>
   </section>
+  <viewImages v-if="viewImagesStore.viewImages" />
 </template>
 
 <script setup>
 import AllPosts from "@/components/AllPosts.vue";
 import CreatePost from "@/components/CreatePost.vue";
+import viewImages from "@/components/viewImages.vue";
 import { ref, onBeforeMount } from "vue";
 import { useUserStore } from "@/stores/user.js";
+import { useViewImagesStore } from "@/stores/viewImages";
 import { getFirestore, getDocs, collection, getDoc, doc, orderBy, query } from "firebase/firestore";
 import { getStorage, ref as firebaseRef, getDownloadURL, listAll } from "firebase/storage";
 import firebase from "@/includes/firebase";
 
 const userStore = useUserStore();
-
+const viewImagesStore = useViewImagesStore();
 const posts = ref([]);
 const loading = ref(false);
 

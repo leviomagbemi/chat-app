@@ -1,5 +1,5 @@
 <template>
-  <div id="menu" class="w-3/4 bg-white p-5 rounded flex flex-col gap-4 md:w-96">
+  <div id="menu" class="w-3/4 bg-white p-5 rounded flex flex-col gap-4 md:w-96 z-10">
     <div
       id="menu-header"
       class="w-full p-2 rounded bg-white flex gap-4 items-center shadow-md shadow-blue-100 cursor-pointer hover:bg-gray-200"
@@ -42,10 +42,10 @@
 </template>
 
 <script setup>
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from "@/stores/user";
 
 const userStore = useUserStore();
-const props = defineProps(['user']);
+const props = defineProps(["user"]);
 
 async function logoutUser() {
   userStore.logout();

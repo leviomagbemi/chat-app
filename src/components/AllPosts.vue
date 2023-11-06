@@ -28,7 +28,7 @@
 
   <!--Main Post Content-->
   <article v-else class="w-full p-5 flex flex-col gap-4 rounded bg-gray-50 fade mb-5">
-    <div id="container" class="w-3/4 mx-auto">
+    <div id="container" class="w-3/4 mx-auto max-[600px]:w-full">
       <!--post header-->
       <div id="header" class="flex gap-2 items-center mb-3">
         <div class="w-16 h-16">
@@ -49,19 +49,36 @@
       <div class="max-w-lg mb-3 mx-auto" v-if="post.images">
         <div v-if="post.images.length > 1" class="photo-grid">
           <div v-for="(image, index) in post.images" :key="index" class="grid-item">
-            <img :src="image" alt="" />
+            <img
+              :src="image"
+              alt=""
+              @click.prevent="
+                (viewImagesStore.images = post.images), (viewImagesStore.viewImages = true)
+              "
+            />
           </div>
+        </div>
+        <div class="w-full">
           <button
             v-if="post.images.length > 4"
-            class="bg-blue-600 text-white my-3 p-2 rounded col-span-2"
+            class="bg-blue-600 text-white my-3 p-2 rounded col-span-2 w-full"
+            @click.prevent="
+              (viewImagesStore.images = post.images), (viewImagesStore.viewImages = true)
+            "
           >
             View More
           </button>
         </div>
-
-        <div v-else>
+        <div v-if="post.images.length === 1">
           <div v-for="(image, index) in post.images" :key="index" class="single-picture">
-            <img :src="image" alt="" />
+            <img
+              :src="image"
+              alt=""
+              class="single-picture"
+              @click.prevent="
+                (viewImagesStore.images = post.images), (viewImagesStore.viewImages = true)
+              "
+            />
           </div>
         </div>
       </div>
@@ -80,12 +97,15 @@
       </div>
     </div>
   </article>
+
   <div v-if="!loading && !post">No Posts</div>
 </template>
 
 <script setup>
 import { computed } from "vue";
+import { useViewImagesStore } from "@/stores/viewImages";
 
+const viewImagesStore = useViewImagesStore();
 const props = defineProps(["post", "loading", "profilePicture", "firstName", "surname"]);
 
 const postDate = computed(() => {
@@ -120,10 +140,7 @@ const postTime = computed(() => {
 <style scoped>
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(200px, 1fr)
-  ); /* Adjust the minimum and maximum width as needed */
+  grid-template-columns: repeat(2, 1fr); /* Adjust the minimum and maximum width as needed */
   gap: 0.5rem; /* Adjust the gap between images as needed */
 }
 
@@ -155,5 +172,16 @@ const postTime = computed(() => {
   width: 100%;
   height: 100%;
   object-fit: cover; /* Crop and scale images to fit the grid item */
+}
+
+@media (max-width: 500px) {
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(150px, 1fr)
+    ); /* Adjust the minimum and maximum width as needed */
+    gap: 0.5rem; /* Adjust the gap between images as needed */
+  }
 }
 </style>

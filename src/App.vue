@@ -34,7 +34,7 @@ const notifications = ref([]);
 
 onBeforeMount(async () => {
   try {
-    await userStore.userDocument();
+    await userStore.userDocument(router);
 
     if (userStore.userLoggedIn === true) {
       const storage = getStorage();
@@ -66,8 +66,6 @@ onBeforeMount(async () => {
           notifications.value.push(document);
         }
       }
-    } else {
-      router.push("/login");
     }
   } catch (error) {
     console.log(error);

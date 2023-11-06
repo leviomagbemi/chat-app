@@ -85,7 +85,7 @@
   />
   <div v-if="editProfile" class="bg-white opacity-50 w-full h-full fixed top-0 z-10"></div>
 
-  <div class="w-full mx-auto md:max-w-3xl">
+  <div class="w-full p-5 mx-auto md:max-w-3xl">
     <div v-if="active === 'post'">
       <Posts
         v-for="post in posts"
@@ -98,17 +98,21 @@
       />
     </div>
   </div>
+  <viewImages v-if="viewImagesStore.viewImages" />
 </template>
 
 <script setup>
 import UploadProfilePic from "@/components/UploadProfilePic.vue";
 import EditProfile from "@/components/EditProfile.vue";
+import viewImages from "@/components/viewImages.vue";
 import { useUserStore } from "@/stores/user.js";
 import { usePostStore } from "@/stores/post.js";
+import { useViewImagesStore } from "@/stores/viewImages";
 import { onBeforeMount, ref, computed } from "vue";
 import Posts from "@/components/Posts.vue";
 
 const userStore = useUserStore();
+const viewImagesStore = useViewImagesStore();
 const uploadModal = ref(false);
 const active = ref("post");
 const postStore = usePostStore();

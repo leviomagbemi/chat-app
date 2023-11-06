@@ -1,5 +1,8 @@
 <template>
-  <div class="mx-auto bg-white rounded shadow-md md:w-2/4 py-5" v-if="props.editProfile">
+  <div
+    class="mx-auto bg-white rounded shadow-md md:w-2/4 md:top-2/4 max-[600px]:w-full max-[600px]:top-2/4 py-5"
+    v-if="props.editProfile"
+  >
     <div class="text-center px-5 flex items-center">
       <h1 class="text-2xl font-bold flex-1">Edit Profile</h1>
       <button @click.prevent="closeEditModal"><i class="fas fa-times fa-lg"></i></button>
