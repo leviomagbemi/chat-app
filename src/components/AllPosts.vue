@@ -35,7 +35,17 @@
           <img :src="profilePicture" alt="" class="rounded-full" />
         </div>
         <div>
-          <h4 class="flex-1 font-semibold text-xl">{{ firstName }} {{ surname }}</h4>
+          <router-link
+            :to="
+              post.document.userID !== userStore.uid
+                ? { name: 'discover-profile', params: { profile_id: profileID } }
+                : { name: 'profile' }
+            "
+          >
+            <h4 class="flex-1 font-semibold text-xl cursor-pointer hover:text-blue-600">
+              {{ firstName }} {{ surname }}
+            </h4>
+          </router-link>
           <p class="text-sm font-semibold text-gray-400">{{ postDate }} {{ postTime }}</p>
         </div>
       </div>
@@ -102,11 +112,24 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useViewImagesStore } from "@/stores/viewImages";
+import { useUserStore } from "@/stores/user";
 
 const viewImagesStore = useViewImagesStore();
-const props = defineProps(["post", "loading", "profilePicture", "firstName", "surname"]);
+const userStore = useUserStore();
+const props = defineProps([
+  "post",
+  "loading",
+  "profilePicture",
+  "firstName",
+  "surname",
+  "profileID"
+]);
+
+onMounted(() => {
+  console.log(props.post);
+});
 
 const postDate = computed(() => {
   const monthsOfYear = [

@@ -67,8 +67,10 @@
         <hr class="my-3" />
         <div>
           <ul class="flex gap-5 justify-center">
-            <li :class="active === 'post' ? activeState : ''">Post</li>
-            <li :class="active === 'friends' ? activeState : ''">Friends</li>
+            <li @click="active = 'post'" :class="active === 'post' ? activeState : ''">Post</li>
+            <li @click="active = 'friends'" :class="active === 'friends' ? activeState : ''">
+              Friends
+            </li>
           </ul>
         </div>
       </div>
@@ -97,6 +99,12 @@
         :surname="userStore.user.surname"
       />
     </div>
+    <div v-if="active === 'friends'">
+      <div>
+        <h1 class="text-4xl font-bold">Friends</h1>
+      </div>
+      <UserFriends v-for="friend in friends" :key="friend.profile_id" :friend="friend" />
+    </div>
   </div>
   <viewImages v-if="viewImagesStore.viewImages" />
 </template>
@@ -107,21 +115,26 @@ import EditProfile from "@/components/EditProfile.vue";
 import viewImages from "@/components/viewImages.vue";
 import { useUserStore } from "@/stores/user.js";
 import { usePostStore } from "@/stores/post.js";
+import { useFriendStore } from "@/stores/friend";
 import { useViewImagesStore } from "@/stores/viewImages";
 import { onBeforeMount, ref, computed } from "vue";
 import Posts from "@/components/Posts.vue";
+import UserFriends from "@/components/UserFriends.vue";
 
 const userStore = useUserStore();
 const viewImagesStore = useViewImagesStore();
+const friendStore = useFriendStore();
 const uploadModal = ref(false);
 const active = ref("post");
 const postStore = usePostStore();
 const posts = ref([]);
 const loading = ref(false);
 const editProfile = ref(false);
+const friends = ref([]);
 
 onBeforeMount(async () => {
   await postStore.getPosts(posts, loading, userStore);
+  await friendStore.userFriends(userStore, friends);
 });
 
 const activeState = computed(() => {

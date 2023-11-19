@@ -81,6 +81,20 @@ export const useFriendStore = defineStore("sendFriendReq", {
       const db = getFirestore(firebase);
 
       await deleteDoc(doc(db, "users", userStore.uid, "friendReq", friend.user));
+    },
+
+    async userFriends(userStore, friends) {
+      const db = getFirestore(firebase);
+
+      const ref = collection(db, "users", userStore.uid, "friends");
+
+      const snapshot = await getDocs(ref);
+
+      for (let doc of snapshot.docs) {
+        const document = doc.data();
+        friends.value.push(document);
+        console.log(document);
+      }
     }
   }
 });

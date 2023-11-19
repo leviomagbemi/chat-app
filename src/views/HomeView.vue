@@ -10,6 +10,7 @@
         :profilePicture="post.user.dp"
         :firstName="post.user.firstName"
         :surname="post.user.surname"
+        :profileID="post.user['profile_id']"
       />
     </main>
   </section>

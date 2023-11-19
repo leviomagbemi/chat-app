@@ -45,9 +45,11 @@
           <!--loading user name-->
         </div>
         <div v-else>
-          <h4 class="text-xl font-semibold">
-            {{ userStore.user.firstName }} {{ userStore.user.surname }}
-          </h4>
+          <router-link to="/profile">
+            <h4 class="text-xl font-semibold hover:text-blue-600 cursor-pointer">
+              {{ userStore.user.firstName }} {{ userStore.user.surname }}
+            </h4>
+          </router-link>
         </div>
       </div>
     </div>
