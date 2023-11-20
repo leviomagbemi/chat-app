@@ -2,7 +2,7 @@
   <article class="shadow-md p-5">
     <figure class="flex items-center gap-5">
       <div class="w-32 h-32">
-        <img class="rounded-full" :src="friend.friend.dp" />
+        <img class="rounded-full" :src="dp" />
       </div>
       <div>
         <figcaption>
@@ -20,12 +20,25 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { onBeforeMount, ref } from "vue";
+import { getFirestore, getDoc, doc } from "firebase/firestore";
+import { getStorage, ref as firebaseRef, getDownloadURL } from "firebase/storage";
+import firebase from "@/includes/firebase";
 
 const props = defineProps(["friend"]);
+const dp = ref(null);
 
-onMounted(() => {
-  console.log(props.friend);
+onBeforeMount(async () => {
+  const db = getFirestore(firebase);
+  const storage = getStorage();
+
+  const ref = doc(db, "profile-pictures", props.friend.friend.user);
+
+  const snapshot = await getDoc(ref);
+
+  const url = await getDownloadURL(firebaseRef(storage, snapshot.data().name));
+
+  dp.value = url;
 });
 </script>
 
