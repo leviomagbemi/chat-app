@@ -106,7 +106,7 @@
       <UserFriends v-for="friend in friends" :key="friend.profile_id" :friend="friend" />
     </div>
   </div>
-  <viewImages v-if="viewImagesStore.viewImages" />
+  <viewImages v-show="viewImagesStore.viewImages" />
 </template>
 
 <script setup>

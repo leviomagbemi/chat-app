@@ -128,14 +128,17 @@
       />
     </div>
   </div>
+  <viewImages v-show="viewImagesStore.viewImages" />
 </template>
 
 <script setup>
 import Posts from "@/components/Posts.vue";
+import viewImages from "@/components/viewImages.vue";
 import { onBeforeMount, ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/stores/user.js";
 import { useFriendStore } from "@/stores/friend.js";
+import { useViewImagesStore } from "@/stores/viewImages";
 import { getFirestore, getDocs, collection, orderBy, query, where } from "firebase/firestore";
 import { getStorage, ref as firebaseRef, getDownloadURL, listAll } from "firebase/storage";
 import firebase from "@/includes/firebase";
@@ -145,6 +148,7 @@ const route = useRoute();
 const userProfile = ref({});
 const userStore = useUserStore();
 const friendStore = useFriendStore();
+const viewImagesStore = useViewImagesStore();
 const posts = ref([]);
 const load = ref(false);
 const isFriend = ref([]);

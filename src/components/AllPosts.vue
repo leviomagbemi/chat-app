@@ -112,7 +112,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { useViewImagesStore } from "@/stores/viewImages";
 import { useUserStore } from "@/stores/user";
 
@@ -126,10 +126,6 @@ const props = defineProps([
   "surname",
   "profileID"
 ]);
-
-onMounted(() => {
-  console.log(props.post);
-});
 
 const postDate = computed(() => {
   const monthsOfYear = [

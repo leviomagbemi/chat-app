@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed w-full h-full top-0 bg-black" style="z-index: 1000">
+  <div class="fixed w-full h-full top-0 bg-black" style="z-index: 1500">
     <!--close icon-->
     <div class="p-5 w-20 h-20">
       <i

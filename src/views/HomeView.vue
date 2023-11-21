@@ -14,7 +14,7 @@
       />
     </main>
   </section>
-  <viewImages v-if="viewImagesStore.viewImages" />
+  <!-- <viewImages v-show="viewImagesStore.viewImages" /> -->
 </template>
 
 <script setup>
