@@ -27,7 +27,7 @@
   </article>
 
   <!--Main Post Content-->
-  <article v-else class="w-full p-5 flex flex-col gap-4 rounded bg-gray-50 fade mb-5">
+  <article v-else class="w-full p-2 flex flex-col gap-4 rounded bg-gray-50 fade mb-5">
     <div id="container" class="w-3/4 mx-auto">
       <!--post header-->
       <div id="header" class="flex gap-2 items-center mb-3">
@@ -35,8 +35,10 @@
           <img :src="profilePicture" alt="" class="rounded-full" />
         </div>
         <div>
-          <h4 class="flex-1 font-semibold text-xl">{{ firstName }} {{ surname }}</h4>
-          <p class="text-sm font-semibold text-gray-400">{{ postDate }} {{ postTime }}</p>
+          <h4 class="flex-1 font-semibold text-md md:text-xl">{{ firstName }} {{ surname }}</h4>
+          <p class="text-xs md:text-sm font-semibold text-gray-400">
+            {{ postDate }} {{ postTime }}
+          </p>
         </div>
       </div>
 
@@ -132,7 +134,7 @@ const postDate = computed(() => {
 
 const postTime = computed(() => {
   const timeArray = props.post.document.time.split(":");
-  const time = `${timeArray[0]} : ${timeArray[1]} ${timeArray[2].slice(3)}`;
+  const time = `${timeArray[0]}:${timeArray[1]} ${timeArray[2].slice(3)}`;
 
   return time;
 });

@@ -42,11 +42,13 @@
                 : { name: 'profile' }
             "
           >
-            <h4 class="flex-1 font-semibold text-xl cursor-pointer hover:text-blue-600">
+            <h4 class="flex-1 font-semibold cursor-pointer hover:text-blue-600 text-md md:text-xl">
               {{ firstName }} {{ surname }}
             </h4>
           </router-link>
-          <p class="text-sm font-semibold text-gray-400">{{ postDate }} {{ postTime }}</p>
+          <p class="text-xs md:text-sm font-semibold text-gray-400">
+            {{ postDate }} {{ postTime }}
+          </p>
         </div>
       </div>
 
@@ -150,7 +152,7 @@ const postDate = computed(() => {
 
 const postTime = computed(() => {
   const timeArray = props.post.document.time.split(":");
-  const time = `${timeArray[0]} : ${timeArray[1]} ${timeArray[2].slice(3)}`;
+  const time = `${timeArray[0]}:${timeArray[1]} ${timeArray[2].slice(3)}`;
 
   return time;
 });
@@ -198,7 +200,7 @@ const postTime = computed(() => {
     display: grid;
     grid-template-columns: repeat(
       auto-fill,
-      minmax(150px, 1fr)
+      minmax(120px, 1fr)
     ); /* Adjust the minimum and maximum width as needed */
     gap: 0.5rem; /* Adjust the gap between images as needed */
   }

@@ -87,7 +87,7 @@
   />
   <div v-if="editProfile" class="bg-white opacity-50 w-full h-full fixed top-0 z-10"></div>
 
-  <div class="w-full p-5 mx-auto md:max-w-3xl">
+  <div class="w-full p-2 mx-auto md:max-w-3xl">
     <div v-if="active === 'post'">
       <Posts
         v-for="post in posts"
