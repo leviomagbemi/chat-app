@@ -49,7 +49,7 @@
           </h1>
           <p class="text-lg my-3">{{ userProfile.bio }}</p>
 
-          <div class="flex gap-2 self-center text-center">
+          <div class="flex gap-2 self-center justify-center">
             <button
               class="bg-gray-200 p-2 font-semibold rounded hover:bg-gray-300"
               v-if="isFriendReq.length !== 0"
