@@ -2,8 +2,15 @@ import { defineStore } from "pinia";
 import { getFirestore, setDoc, doc, collection, getDocs, deleteDoc } from "firebase/firestore";
 import firebase from "@/includes/firebase";
 
-export const useFriendStore = defineStore("sendFriendReq", {
-  state: () => ({}),
+export const useFriendStore = defineStore("friends", {
+  state: () => ({
+    discoverFriends: [],
+    requests: [],
+    userFriendsArr: [],
+    ids: [],
+    show: true,
+    loaded: false
+  }),
 
   actions: {
     async sendFriendReq(friend, userStore, req) {
@@ -94,6 +101,55 @@ export const useFriendStore = defineStore("sendFriendReq", {
         const document = doc.data();
         friends.value.push(document);
         console.log(document);
+      }
+    },
+
+    async newFriends(userStore) {
+      this.show = false;
+      const db = getFirestore(firebase);
+      const usersRef = collection(db, "users");
+
+      await userStore.userDocument();
+
+      //get user friends
+      const userFriendsRef = collection(db, "users", userStore.uid, "friends");
+
+      const userFriendsSnapshot = await getDocs(userFriendsRef);
+
+      for (let doc of userFriendsSnapshot.docs) {
+        const document = doc.data();
+        this.userFriendsArr.push(document.friend.user);
+        console.log(document);
+      }
+
+      // fetch users
+      const usersSnapshot = await getDocs(usersRef);
+
+      for (let doc of usersSnapshot.docs) {
+        //check if current user has friend request
+        if (doc.id === userStore.uid) {
+          const requestsRef = collection(db, "users", userStore.uid, "friendReq");
+
+          const reqSnapshot = await getDocs(requestsRef);
+
+          for (let doc of reqSnapshot.docs) {
+            const document = doc.data();
+            this.requests.push(document);
+            this.ids.push(document.user.user);
+          }
+          this.show = true;
+        }
+
+        // check if user is not in friend request and add to discover friends
+        this.discoverFriends = usersSnapshot.docs
+          .map((doc) => doc.data())
+          .filter((friend) => {
+            return (
+              friend.user !== userStore.uid &&
+              !this.ids.includes(friend.user) &&
+              !this.userFriendsArr.includes(friend.user)
+            );
+          });
       }
     }
   }

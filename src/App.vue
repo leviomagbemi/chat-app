@@ -18,8 +18,9 @@
 <script setup>
 import AppHeader from "@/components/AppHeader.vue";
 import AppMenu from "@/components/AppMenu.vue";
-import { useMenuStore } from "@/stores/menu.js";
-import { useUserStore } from "@/stores/user.js";
+import { useMenuStore } from "@/stores/menu";
+import { useUserStore } from "@/stores/user";
+import { useFeedPostStore } from "@/stores/feedPost";
 import { ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import { getStorage, ref as firebaseRef, getDownloadURL } from "firebase/storage";
@@ -28,47 +29,54 @@ import firebase from "@/includes/firebase";
 
 const menuStore = useMenuStore();
 const userStore = useUserStore();
+const feedPostStore = useFeedPostStore();
 const router = useRouter();
 const friends = ref([]);
 const notifications = ref([]);
 
 onBeforeMount(async () => {
-  try {
-    await userStore.userDocument(router);
+  if (!userStore.appLoaded) {
+    try {
+      await userStore.userDocument(router);
 
-    if (userStore.userLoggedIn === true) {
-      const storage = getStorage();
-      const db = getFirestore(firebase);
+      // get user dp, number
+      if (userStore.userLoggedIn === true) {
+        const storage = getStorage();
+        const db = getFirestore(firebase);
 
-      const ref = doc(db, "profile-pictures", userStore.uid);
+        const ref = doc(db, "profile-pictures", userStore.uid);
 
-      const snapshot = await getDoc(ref);
-      const document = snapshot.data();
+        const snapshot = await getDoc(ref);
+        const document = snapshot.data();
 
-      const dp = await getDownloadURL(firebaseRef(storage, document.name));
-      userStore.profilePicture = dp;
+        const dp = await getDownloadURL(firebaseRef(storage, document.name));
+        userStore.profilePicture = dp;
 
-      const friendsRef = collection(db, "users", userStore.uid, "friendReq");
-      const notificationsRef = collection(db, "users", userStore.uid, "notifications");
+        const friendsRef = collection(db, "users", userStore.uid, "friendReq");
+        const notificationsRef = collection(db, "users", userStore.uid, "notifications");
 
-      const friendsSnaphot = await getDocs(friendsRef);
+        const friendsSnaphot = await getDocs(friendsRef);
 
-      for (let doc of friendsSnaphot.docs) {
-        const document = doc.data();
-        friends.value.push(document);
-      }
+        for (let doc of friendsSnaphot.docs) {
+          const document = doc.data();
+          friends.value.push(document);
+        }
 
-      const notificationsSnaphot = await getDocs(notificationsRef);
+        const notificationsSnaphot = await getDocs(notificationsRef);
 
-      for (let doc of notificationsSnaphot.docs) {
-        const document = doc.data();
-        if (!document.read) {
-          notifications.value.push(document);
+        for (let doc of notificationsSnaphot.docs) {
+          const document = doc.data();
+          if (!document.read) {
+            notifications.value.push(document);
+          }
         }
       }
+
+      await feedPostStore.getFeedPost(userStore);
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
+    useUserStore.appLoaded = true;
   }
 });
 

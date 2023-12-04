@@ -14,10 +14,12 @@ export const useUserStore = defineStore("user", {
     userLoggedIn: false,
     uid: "",
     profilePicture: "",
-    user: ""
+    user: "",
+    appLoaded: false
   }),
 
   actions: {
+    // create user
     async createUser(values) {
       const db = getFirestore(firebase);
 
@@ -42,6 +44,7 @@ export const useUserStore = defineStore("user", {
       });
     },
 
+    // sign user in after account creation
     async authenticate(values) {
       const auth = getAuth();
 
@@ -50,6 +53,7 @@ export const useUserStore = defineStore("user", {
       this.userLoggedIn = true;
     },
 
+    // check if user is logged in
     async checkUser(router) {
       await new Promise((resolve, reject) => {
         getAuth().onAuthStateChanged((user) => {
@@ -66,6 +70,7 @@ export const useUserStore = defineStore("user", {
       });
     },
 
+    // get user document if user is logged in
     async userDocument(router) {
       await this.checkUser(router);
 
@@ -81,6 +86,9 @@ export const useUserStore = defineStore("user", {
       }
     },
 
+    //get user dp
+
+    //signout user
     async logout() {
       const auth = getAuth();
       await signOut(auth);
