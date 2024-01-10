@@ -58,16 +58,6 @@
         <div>
           <div class="flex justify-between mb-3">
             <p>{{ charCount }}</p>
-
-            <!--Emoji Picker-->
-            <button
-              @click.prevent="toogleEmoji"
-              class="w-20 bg-blue-500 text-lg text-white rounded"
-              ref="pickerContainer"
-              type="button"
-            >
-              <i class="fa-solid fa-face-smile"></i>
-            </button>
           </div>
           <p v-if="charCount === 0" class="text-red-500 mb-2">
             Text limit exceeded. Please shorten.
@@ -138,7 +128,6 @@ import { ref } from "vue";
 import { getStorage, ref as firebaseRef, uploadBytes } from "firebase/storage";
 import { getFirestore, setDoc, doc } from "firebase/firestore";
 import firebase from "@/includes/firebase";
-import { EmojiButton } from "@joeattardi/emoji-button";
 
 const maxErr = ref("");
 const maxlength = ref(500);
@@ -262,21 +251,6 @@ function checkPost(e) {
   if (e.target.value.length < maxlength.value) {
     maxErr.value = "";
   }
-}
-
-function toogleEmoji(e) {
-  const picker = new EmojiButton({
-    position: "auto",
-    emojisPerRow: 5,
-    rows: 5,
-    showSearch: false,
-    showVariants: true
-  });
-  picker.on("emoji", (selection) => {
-    textField.value.value += selection.emoji;
-    charCount.value--;
-  });
-  picker.togglePicker(e.target);
 }
 </script>
 
