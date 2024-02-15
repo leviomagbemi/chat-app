@@ -24,21 +24,7 @@
     <div class="p-5 flex-col flex gap-4 md:flex-row fade" v-else>
       <!--Profile Image-->
       <div class="w-40 h-40 relative mx-auto">
-        <img
-          v-if="userStore.user.gender === 'male' && userStore.profilePicture === ''"
-          class="rounded"
-          src="@/assets/avatar-male.jpg"
-          i
-          alt=""
-        />
-        <img
-          v-else-if="userStore.user.gender === 'female' && userStore.profilePicture === ''"
-          class="rounded"
-          src="@/assets/avatar-male.jpg"
-          i
-          alt=""
-        />
-        <img v-else class="rounded" :src="userStore.profilePicture" i alt="" />
+        <img class="rounded" :src="dp" alt="" />
         <button
           class="absolute top-32 right-2 inline-block p-5 bg-blue-600 rounded-full text-white text-center hover:bg-blue-500"
           @click="uploadModal = true"
@@ -94,16 +80,17 @@
         :key="post.postID"
         :post="post"
         :loading="loading"
-        :profilePicture="userStore.profilePicture"
         :firstName="userStore.user.firstName"
         :surname="userStore.user.surname"
+        :dp="userStore.user.dp"
+        :gender="userStore.user.gender"
       />
     </div>
     <div v-if="active === 'friends'">
       <div>
         <h1 class="text-4xl font-bold">Friends</h1>
       </div>
-      <UserFriends v-for="friend in friends" :key="friend.profile_id" :friend="friend" />
+      <UserFriends v-for="friend in friendsData" :key="friend.profile_id" :friend="friend" />
     </div>
   </div>
   <viewImages v-show="viewImagesStore.viewImages" />
@@ -120,6 +107,8 @@ import { useViewImagesStore } from "@/stores/viewImages";
 import { onBeforeMount, ref, computed } from "vue";
 import Posts from "@/components/Posts.vue";
 import UserFriends from "@/components/UserFriends.vue";
+import { getFirestore, getDocs, collection } from "firebase/firestore";
+import firebase from "@/includes/firebase";
 
 const userStore = useUserStore();
 const viewImagesStore = useViewImagesStore();
@@ -131,10 +120,32 @@ const posts = ref([]);
 const loading = ref(false);
 const editProfile = ref(false);
 const friends = ref([]);
+const friendsData = ref([]);
+
+const dp = computed(() => {
+  if (!userStore.user.dp && userStore.user.gender == "female") {
+    return userStore.female_dp;
+  } else if (!userStore.user.dp && userStore.user.gender == "male") {
+    return userStore.male_dp;
+  } else {
+    return userStore.user.dp;
+  }
+});
 
 onBeforeMount(async () => {
   await postStore.getPosts(posts, loading, userStore);
   await friendStore.userFriends(userStore, friends);
+
+  const db = getFirestore(firebase);
+
+  const ref = collection(db, "users");
+
+  const snapshot = await getDocs(ref);
+
+  // store user details
+  for (let doc of snapshot.docs) {
+    if (friends.value.includes(doc.id)) friendsData.value.push(doc.data());
+  }
 });
 
 const activeState = computed(() => {

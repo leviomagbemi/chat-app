@@ -18,7 +18,7 @@
       <div
         class="w-3/12 max-[600px]:w-full min-[768px]:w-1/4 min-[768px]:absolute min-[768px]:top-2/4 min-[768px]:left-2/4 min-[768px]:-translate-y-2/4 min-[768px]:-translate-x-2/4 mx-auto"
       >
-        <img class="view w-full" :src="viewImagesStore.images[index]" />
+        <img class="view w-full" :src="viewImagesStore.images[viewImagesStore.index]" />
       </div>
       <i
         class="fas fa-chevron-right fa-lg text-4xl text-white absolute min-[768px]:top-2/4 min-[768px]:right-1/4 max-[600px]:top-1/4 max-[600px]:right-0"
@@ -34,23 +34,23 @@ import { ref } from "vue";
 import { useViewImagesStore } from "@/stores/viewImages";
 
 const viewImagesStore = useViewImagesStore();
-const index = ref(0);
+// const index = ref(0);
 
 function nextImage() {
-  if (index.value >= viewImagesStore.images.length - 1) {
-    index.value = 0;
+  if (viewImagesStore.index >= viewImagesStore.images.length - 1) {
+    viewImagesStore.index = 0;
     return;
   }
-  index.value++;
+  viewImagesStore.index++;
 }
 
 function prevImage() {
-  if (index.value === 0) {
-    index.value = viewImagesStore.images.length - 1;
+  if (viewImagesStore.index === 0) {
+    viewImagesStore.index = viewImagesStore.images.length - 1;
     return;
   }
 
-  index.value--;
+  viewImagesStore.index--;
 }
 </script>
 

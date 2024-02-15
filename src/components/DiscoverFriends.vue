@@ -1,31 +1,12 @@
 <template>
   <article class="shadow-md p-5">
     <figure class="flex items-center gap-5">
-      <div class="w-32 h-32">
-        <img
-          v-if="discoverFriends.dp"
-          :src="discoverFriends.dp"
-          alt=""
-          class="rounded-full border-solid border-4 border-blue-300"
-        />
-        <img
-          v-if="discoverFriends.gender === 'male' && !discoverFriends.dp === ''"
-          class="rounded-full"
-          src="@/assets/avatar-male.jpg"
-          i
-          alt=""
-        />
-        <img
-          v-else-if="discoverFriends.gender === 'female' && !discoverFriends.dp"
-          class="rounded-full"
-          src="@/assets/avatar-male.jpg"
-          i
-          alt=""
-        />
+      <div class="md:w-32 md:h-32 w-20 h-20">
+        <img :src="dp" alt="" class="rounded-full border-solid border-4 border-blue-300" />
       </div>
       <div>
         <figcaption
-          class="text-4xl mb-3 cursor-pointer hover:text-blue-600"
+          class="md:text-4xl text-xl mb-3 cursor-pointer hover:text-blue-600"
           @click.prevent="
             $router.push({
               name: 'discover-profile',
@@ -55,7 +36,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { getFirestore, getDocs, collection } from "firebase/firestore";
 import { useUserStore } from "@/stores/user.js";
 import { useFriendStore } from "@/stores/friend.js";
@@ -66,16 +47,26 @@ const userStore = useUserStore();
 const friendStore = useFriendStore();
 const req = ref(false);
 
+const dp = computed(() => {
+  if (!props.discoverFriends.dp && props.discoverFriends.gender == "female") {
+    return userStore.female_dp;
+  } else if (!props.discoverFriends.dp && props.discoverFriends.gender == "male") {
+    return userStore.male_dp;
+  } else {
+    return props.discoverFriends.dp;
+  }
+});
+
 onMounted(async () => {
   // check if current user is in friendReq list of any user
   const db = getFirestore(firebase);
-  const ref = collection(db, "users", props.discoverFriends.user, "friendReq");
+  const ref = collection(db, "users", props.discoverFriends.user_id, "friendReq");
 
   const snapshot = await getDocs(ref);
   for (let doc of snapshot.docs) {
     const document = doc.data();
 
-    if (document.user.user === userStore.uid) {
+    if (document.user_id === userStore.uid) {
       req.value = true;
     }
   }

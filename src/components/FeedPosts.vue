@@ -32,13 +32,13 @@
       <!--post header-->
       <div id="header" class="flex gap-2 items-center mb-3">
         <div class="w-16 h-16">
-          <img :src="profilePicture" alt="" class="rounded-full" />
+          <img :src="profileDp" alt="" class="rounded-full" />
         </div>
         <div>
           <router-link
             :to="
               post.document.userID !== userStore.uid
-                ? { name: 'discover-profile', params: { profile_id: profileID } }
+                ? { name: 'discover-profile', params: { profile_id: profile_id } }
                 : { name: 'profile' }
             "
           >
@@ -65,7 +65,9 @@
               :src="image"
               alt=""
               @click.prevent="
-                (viewImagesStore.images = post.images), (viewImagesStore.viewImages = true)
+                (viewImagesStore.index = index),
+                  (viewImagesStore.images = post.images),
+                  (viewImagesStore.viewImages = true)
               "
             />
           </div>
@@ -123,10 +125,11 @@ const userStore = useUserStore();
 const props = defineProps([
   "post",
   "loading",
-  "profilePicture",
+  "dp",
   "firstName",
   "surname",
-  "profileID"
+  "profile_id",
+  "gender"
 ]);
 
 const postDate = computed(() => {
@@ -155,6 +158,16 @@ const postTime = computed(() => {
   const time = `${timeArray[0]}:${timeArray[1]} ${timeArray[2].slice(3)}`;
 
   return time;
+});
+
+const profileDp = computed(() => {
+  if (!props.dp && props.gender == "female") {
+    return userStore.female_dp;
+  } else if (!props.dp && props.gender == "male") {
+    return userStore.male_dp;
+  } else {
+    return props.dp;
+  }
 });
 </script>
 

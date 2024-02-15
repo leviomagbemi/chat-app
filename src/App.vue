@@ -23,8 +23,8 @@ import { useUserStore } from "@/stores/user";
 import { useFeedPostStore } from "@/stores/feedPost";
 import { ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
-import { getStorage, ref as firebaseRef, getDownloadURL } from "firebase/storage";
-import { doc, getFirestore, getDoc, getDocs, collection } from "firebase/firestore";
+
+import { getFirestore, getDocs, collection } from "firebase/firestore";
 import firebase from "@/includes/firebase";
 
 const menuStore = useMenuStore();
@@ -39,18 +39,9 @@ onBeforeMount(async () => {
     try {
       await userStore.userDocument(router);
 
-      // get user dp, number
+      // get numbers of friend request
       if (userStore.userLoggedIn === true) {
-        const storage = getStorage();
         const db = getFirestore(firebase);
-
-        const ref = doc(db, "profile-pictures", userStore.uid);
-
-        const snapshot = await getDoc(ref);
-        const document = snapshot.data();
-
-        const dp = await getDownloadURL(firebaseRef(storage, document.name));
-        userStore.profilePicture = dp;
 
         const friendsRef = collection(db, "users", userStore.uid, "friendReq");
         const notificationsRef = collection(db, "users", userStore.uid, "notifications");
@@ -62,6 +53,7 @@ onBeforeMount(async () => {
           friends.value.push(document);
         }
 
+        // get numbers of unread notification
         const notificationsSnaphot = await getDocs(notificationsRef);
 
         for (let doc of notificationsSnaphot.docs) {

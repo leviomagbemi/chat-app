@@ -6,21 +6,7 @@
       @click="$router.push('/profile')"
     >
       <div class="w-14 h-14">
-        <img
-          v-if="props.user.gender === 'male' && userStore.profilePicture === ''"
-          class="rounded-full"
-          src="@/assets/avatar-male.jpg"
-          i
-          alt=""
-        />
-        <img
-          v-else-if="props.user.gender === 'female' && userStore.profilePicture === ''"
-          class="rounded-full"
-          src="@/assets/avatar-male.jpg"
-          i
-          alt=""
-        />
-        <img v-else class="rounded-full" :src="userStore.profilePicture" i alt="" />
+        <img class="rounded-full" :src="dp" alt="" />
       </div>
       <div>
         <h4 class="text-2xl font-bold">{{ props.user.firstName }} {{ props.user.surname }}</h4>
@@ -43,9 +29,20 @@
 
 <script setup>
 import { useUserStore } from "@/stores/user";
+import { computed } from "vue";
 
 const userStore = useUserStore();
 const props = defineProps(["user"]);
+
+const dp = computed(() => {
+  if (!userStore.user.dp && userStore.user.gender == "female") {
+    return userStore.female_dp;
+  } else if (!userStore.user.dp && userStore.user.gender == "male") {
+    return userStore.male_dp;
+  } else {
+    return userStore.user.dp;
+  }
+});
 
 async function logoutUser() {
   userStore.logout();

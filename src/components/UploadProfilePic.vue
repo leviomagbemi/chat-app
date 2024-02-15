@@ -1,7 +1,7 @@
 <template>
   <div class="w-screen h-screen bg-gray-900 opacity-30 fixed top-0"></div>
   <div
-    class="bg-white w-2/5 py-5 rounded mx-auto drop-shadow-md fixed z-10 top-1/2 left-1/2"
+    class="bg-white md:w-2/5 w-3/4 py-5 rounded mx-auto drop-shadow-md fixed z-10 top-1/2 left-1/2"
     style="transform: translate(-50%, -50%)"
   >
     <div class="flex px-5">
@@ -78,11 +78,6 @@ onBeforeMount(async () => {
   await userStore.checkUser();
 });
 
-// function loadImage(e) {
-
-//   loadFile(e);
-// }
-
 function loadFile(e) {
   try {
     file.value = e.target.files[0];
@@ -128,15 +123,16 @@ async function upload() {
         await updateDoc(user, {
           dp
         });
-        userStore.profilePicture = dp;
+        userStore.user.dp = dp;
       }
     );
 
     const db = getFirestore(firebase);
 
-    await setDoc(doc(db, "profile-pictures", userStore.uid), {
+    await setDoc(doc(db, "profile_pictures", userStore.uid), {
       name: fileRef.value._location.path_
     });
+    console.log(fileRef.value._location.path_);
   } catch (error) {
     console.log(error);
   }

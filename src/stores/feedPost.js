@@ -6,7 +6,7 @@ import firebase from "@/includes/firebase";
 export const useFeedPostStore = defineStore("feedPost", {
   state: () => ({
     feedPosts: [],
-    loading: false
+    loading: true
   }),
 
   actions: {
@@ -25,7 +25,7 @@ export const useFeedPostStore = defineStore("feedPost", {
         for (let doc of userSnapshot.docs) {
           const document = doc.data();
 
-          friends.push(document.friend.user);
+          friends.push(document.user_id);
         }
 
         const ref = query(collection(db, "posts"), orderBy("date", "desc"));

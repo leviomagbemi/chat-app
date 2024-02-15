@@ -15,17 +15,24 @@
     </article>
   </div>
 
-  <div class="p-5 rounded w-full mx-auto md:w-3/5" v-if="friendStore.requests.length !== 0">
-    <h1 class="mb-5 font-bold text-2xl">Friend Requests</h1>
+  <div class="p-5 rounded w-full mx-auto md:w-3/5">
+    <h1 class="mb-5 font-bold text-2xl" v-if="friendStore.requests.length !== 0">
+      Friend Requests
+    </h1>
     <FriendRequests
-      v-for="request in friendStore.requests"
-      :key="request.user.profile_id"
-      :friendRequest="request.user"
+      v-for="request in friendStore.requestsData"
+      :key="request.profile_id"
+      :friendRequest="request"
     />
   </div>
-  <hr class="my-5" v-if="friendStore.requests.length !== 0" />
+  <hr
+    class="my-5"
+    v-if="friendStore.requests.length !== 0 && friendStore.discoverFriends.length !== 0"
+  />
   <div class="p-5 rounded w-full mx-auto md:w-3/5" v-show="friendStore.show">
-    <h1 class="mb-5 font-bold text-2xl">Discover New Friends</h1>
+    <h1 class="mb-5 font-bold text-2xl" v-if="friendStore.discoverFriends.length !== 0">
+      Discover New Friends
+    </h1>
     <DiscoverFriends
       v-for="discoverFriend in friendStore.discoverFriends"
       :key="discoverFriend.profile_id"
@@ -40,13 +47,24 @@ import { useFriendStore } from "@/stores/friend";
 import { useUserStore } from "@/stores/user";
 import DiscoverFriends from "@/components/DiscoverFriends.vue";
 import FriendRequests from "@/components/FriendRequests.vue";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import firebase from "@/includes/firebase";
 
 const friendStore = useFriendStore();
 const userStore = useUserStore();
 
 onMounted(async () => {
+  const db = getFirestore(firebase);
+
   if (!friendStore.loaded) {
     await friendStore.newFriends(userStore);
+    friendStore.requests.forEach(async (request) => {
+      const ref = doc(db, "users", request.user_id);
+      const user = await getDoc(ref);
+
+      friendStore.requestsData.push(user.data());
+    });
+
     friendStore.loaded = true;
   }
 });

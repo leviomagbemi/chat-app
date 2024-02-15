@@ -24,21 +24,7 @@
     <div class="p-5 flex-col flex gap-4 md:flex-row fade" v-else>
       <!--Profile Image-->
       <div class="w-40 h-40 relative mx-auto">
-        <img
-          v-if="userProfile.gender === 'male' && userProfile.dp === ''"
-          class="rounded"
-          src="@/assets/avatar-male.jpg"
-          i
-          alt=""
-        />
-        <img
-          v-else-if="userProfile.gender === 'female' && userProfile.dp === ''"
-          class="rounded"
-          src="@/assets/avatar-male.jpg"
-          i
-          alt=""
-        />
-        <img v-else class="rounded" :src="userProfile.dp" i alt="" />
+        <img class="rounded" :src="dp" alt="" />
       </div>
 
       <!--Profile Info-->
@@ -107,8 +93,10 @@
         <hr class="my-3" />
         <div>
           <ul class="flex gap-5 justify-center">
-            <li :class="active === 'post' ? activeState : ''">Post</li>
-            <li :class="active === 'friends' ? activeState : ''">Friends</li>
+            <li @click="active = 'post'" :class="active === 'post' ? activeState : ''">Post</li>
+            <li @click="active = 'friends'" :class="active === 'friends' ? activeState : ''">
+              Friends
+            </li>
           </ul>
         </div>
       </div>
@@ -122,10 +110,15 @@
         :key="post.postID"
         :post="post"
         :loading="load"
-        :profilePicture="userProfile.dp"
+        :dp="userProfile.dp"
         :firstName="userProfile.firstName"
         :surname="userProfile.surname"
+        :gender="userProfile.gender"
       />
+    </div>
+
+    <div v-if="active === 'friends'">
+      <UserFriends v-for="friend in friendsData" :key="friend.profile_id" :friend="friend" />
     </div>
   </div>
   <viewImages v-show="viewImagesStore.viewImages" />
@@ -134,28 +127,41 @@
 <script setup>
 import Posts from "@/components/Posts.vue";
 import viewImages from "@/components/viewImages.vue";
-import { onBeforeMount, ref, computed } from "vue";
+import UserFriends from "@/components/UserFriends.vue";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/stores/user.js";
 import { useFriendStore } from "@/stores/friend.js";
 import { useViewImagesStore } from "@/stores/viewImages";
+import { onBeforeMount, ref, computed } from "vue";
 import { getFirestore, getDocs, collection, orderBy, query, where } from "firebase/firestore";
 import { getStorage, ref as firebaseRef, getDownloadURL, listAll } from "firebase/storage";
 import firebase from "@/includes/firebase";
 
 const active = ref("post");
 const route = useRoute();
-const userProfile = ref({});
 const userStore = useUserStore();
 const friendStore = useFriendStore();
 const viewImagesStore = useViewImagesStore();
 const posts = ref([]);
+const userProfile = ref({});
 const load = ref(false);
 const isFriend = ref([]);
 const isFriendReq = ref([]);
 const isFriendReq2 = ref([]);
+const friends = ref([]);
+const friendsData = ref([]);
 const confirm = ref(false);
 const req = ref(false);
+
+const dp = computed(() => {
+  if (!userProfile.value.dp && userProfile.value.gender == "female") {
+    return userStore.female_dp;
+  } else if (!userProfile.value.dp && userProfile.value.gender == "male") {
+    return userStore.male_dp;
+  } else {
+    return userProfile.value.dp;
+  }
+});
 
 onBeforeMount(async () => {
   load.value = true;
@@ -174,12 +180,12 @@ onBeforeMount(async () => {
   }
 
   //check is friends
-  await friendStore.checkFriends(userProfile.value.user, isFriend, userStore);
+  await friendStore.checkFriends(userProfile.value.user_id, isFriend, userStore);
 
-  // get user postd with user id
+  // get user post with user id
   const ref = query(
     collection(db, "posts"),
-    where("userID", "==", userProfile.value.user),
+    where("userID", "==", userProfile.value.user_id),
     orderBy("time", "desc")
   );
 
@@ -190,7 +196,10 @@ onBeforeMount(async () => {
 
     const images = [];
 
-    const storageRef = firebaseRef(storage, `${userProfile.value.user}/posts/${document.postID}`);
+    const storageRef = firebaseRef(
+      storage,
+      `${userProfile.value.user_id}/posts/${document.postID}`
+    );
 
     const lists = (await listAll(storageRef)).items;
 
@@ -207,7 +216,7 @@ onBeforeMount(async () => {
 
   //check if user is in friendReq list from every user end
 
-  const requestsRef = collection(db, "users", userProfile.value.user, "friendReq");
+  const requestsRef = collection(db, "users", userProfile.value.user_id, "friendReq");
 
   const requestsRef2 = collection(db, "users", userStore.uid, "friendReq");
 
@@ -216,7 +225,7 @@ onBeforeMount(async () => {
       isFriendReq.value = snapshot.docs
         .map((doc) => doc.data())
         .filter((doc) => {
-          return doc.user.user === userStore.uid;
+          return doc.user_id === userStore.uid;
         });
     })
     .catch((err) => console.log(err));
@@ -226,11 +235,32 @@ onBeforeMount(async () => {
       isFriendReq2.value = snapshot.docs
         .map((doc) => doc.data())
         .filter((doc) => {
-          return doc.user.user === userProfile.value.user;
+          return doc.user_id === userProfile.value.user_id;
         });
       load.value = false;
     })
     .catch((err) => console.log(err));
+
+  // Get user friends
+
+  const friendsRef = collection(db, "users", userProfile.value.user_id, "friends");
+
+  const snapshot = await getDocs(friendsRef);
+
+  for (let doc of snapshot.docs) {
+    const document = doc.data();
+    friends.value.push(document.user_id);
+  }
+
+  const usersRef = collection(db, "users");
+
+  const userSnapshot = await getDocs(usersRef);
+
+  // store user details
+  for (let doc of userSnapshot.docs) {
+    if (friends.value.includes(doc.id) && doc.id != userStore.uid)
+      friendsData.value.push(doc.data());
+  }
 });
 
 async function sendFriendReq() {

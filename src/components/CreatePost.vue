@@ -14,34 +14,13 @@
         </div>
 
         <div class="w-14 h-14" v-else>
-          <img
-            v-if="userStore.profilePicture"
-            class="rounded-full"
-            :src="userStore.profilePicture"
-            i
-            alt=""
-          />
-
-          <img
-            v-if="userStore.user.gender === 'male' && userStore.profilePicture === ''"
-            class="rounded-full"
-            src="@/assets/avatar-male.jpg"
-            i
-            alt=""
-          />
-          <img
-            v-else-if="userStore.user.gender === 'female' && userStore.profilePicture === ''"
-            class="rounded-full"
-            src="@/assets/avatar-male.jpg"
-            i
-            alt=""
-          />
+          <img class="rounded-full" :src="dp" alt="" />
         </div>
       </div>
 
       <!--user name-->
       <div class="flex-1">
-        <div v-if="!userStore.user.user" class="h-5 w-full bg-gray-100 rounded">
+        <div v-if="!userStore.user" class="h-5 w-full bg-gray-100 rounded">
           <!--loading user name-->
         </div>
         <div v-else>
@@ -124,7 +103,7 @@
 
 <script setup>
 import { useUserStore } from "@/stores/user.js";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { getStorage, ref as firebaseRef, uploadBytes } from "firebase/storage";
 import { getFirestore, setDoc, doc } from "firebase/firestore";
 import firebase from "@/includes/firebase";
@@ -139,6 +118,16 @@ const overlayHeight = ref(100);
 const textField = ref(null);
 
 const userStore = useUserStore();
+
+const dp = computed(() => {
+  if (!userStore.user.dp && userStore.user.gender == "female") {
+    return userStore.female_dp;
+  } else if (!userStore.user.dp && userStore.user.gender == "male") {
+    return userStore.male_dp;
+  } else {
+    return userStore.user.dp;
+  }
+});
 
 function loadImage(e) {
   images.value = e.target.files;

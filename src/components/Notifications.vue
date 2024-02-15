@@ -5,7 +5,7 @@
   </div>
   <div class="flex items-center p-3 gap-4 bg-gray-100 rounded mb-3">
     <div class="w-20 h-20">
-      <img :src="notification.user.dp" class="rounded-full" />
+      <img :src="dp" class="rounded-full" />
     </div>
     <div>
       <p class="font-semibold cursor-pointer hover:text-blue-600" @click.prevent="markAsRead">
@@ -21,11 +21,22 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user.js";
 import { getFirestore, updateDoc, doc } from "firebase/firestore";
 import firebase from "@/includes/firebase";
+import { computed } from "vue";
 
 const props = defineProps(["notification", "loading"]);
 
 const userStore = useUserStore();
 const router = useRouter();
+
+const dp = computed(() => {
+  if (!props.notification.dp && props.notification.gender == "female") {
+    return userStore.female_dp;
+  } else if (!props.notification.dp && props.notification.gender == "male") {
+    return userStore.male_dp;
+  } else {
+    return props.notification.dp;
+  }
+});
 
 async function markAsRead() {
   const db = getFirestore(firebase);
@@ -36,7 +47,7 @@ async function markAsRead() {
 
   router.push({
     name: "discover-profile",
-    params: { profile_id: props.notification.user.profile_id }
+    params: { profile_id: props.notification.profile_id }
   });
 }
 </script>

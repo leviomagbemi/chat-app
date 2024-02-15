@@ -5,7 +5,16 @@ import {
   signInWithEmailAndPassword,
   signOut
 } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  query,
+  collection,
+  where
+} from "firebase/firestore";
 
 import firebase from "@/includes/firebase";
 
@@ -13,9 +22,10 @@ export const useUserStore = defineStore("user", {
   state: () => ({
     userLoggedIn: false,
     uid: "",
-    profilePicture: "",
-    user: "",
-    appLoaded: false
+    user: null,
+    appLoaded: false,
+    female_dp: "https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/user_female-1024.png",
+    male_dp: "https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/user_male-1024.png"
   }),
 
   actions: {
@@ -39,7 +49,7 @@ export const useUserStore = defineStore("user", {
         email: values.email,
         dob: values.dob,
         gender: values.gender,
-        user: createUser.user.uid,
+        user_id: createUser.user.uid,
         profile_id
       });
     },
@@ -85,8 +95,6 @@ export const useUserStore = defineStore("user", {
         console.log("No such document");
       }
     },
-
-    //get user dp
 
     //signout user
     async logout() {

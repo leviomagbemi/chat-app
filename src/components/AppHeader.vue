@@ -16,21 +16,7 @@
           </div>
 
           <div v-else>
-            <img
-              v-if="props.user.gender === 'male' && userStore.profilePicture === ''"
-              class="rounded-full"
-              src="@/assets/avatar-male.jpg"
-              i
-              alt=""
-            />
-            <img
-              v-else-if="props.user.gender === 'female' && userStore.profilePicture === ''"
-              class="rounded-full"
-              src="@/assets/avatar-male.jpg"
-              i
-              alt=""
-            />
-            <img v-else class="rounded-full" :src="userStore.profilePicture" i alt="" />
+            <img class="rounded-full" :src="dp" />
           </div>
         </div>
       </div>
@@ -39,11 +25,23 @@
 </template>
 
 <script setup>
-import AppNav from "./AppNav.vue";
+import { computed } from "vue";
 import { useUserStore } from "@/stores/user";
+import AppNav from "./AppNav.vue";
+
+const userStore = useUserStore();
 
 const props = defineProps(["user", "friends", "notifications"]);
-const userStore = useUserStore();
+
+const dp = computed(() => {
+  if (!userStore.user.dp && userStore.user.gender == "female") {
+    return userStore.female_dp;
+  } else if (!userStore.user.dp && userStore.user.gender == "male") {
+    return userStore.male_dp;
+  } else {
+    return userStore.user.dp;
+  }
+});
 </script>
 
 <style scoped>

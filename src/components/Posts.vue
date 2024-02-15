@@ -32,7 +32,7 @@
       <!--post header-->
       <div id="header" class="flex gap-2 items-center mb-3">
         <div class="w-16 h-16">
-          <img :src="profilePicture" alt="" class="rounded-full" />
+          <img :src="profileDp" alt="" class="rounded-full" />
         </div>
         <div>
           <h4 class="flex-1 font-semibold text-md md:text-xl">{{ firstName }} {{ surname }}</h4>
@@ -55,9 +55,9 @@
               :src="image"
               alt=""
               @click.prevent="
-                (viewImagesStore.images = post.images),
-                  (viewImagesStore.viewImages = true),
-                  console.log('yes')
+                (viewImagesStore.index = index),
+                  (viewImagesStore.images = post.images),
+                  (viewImagesStore.viewImages = true)
               "
             />
           </div>
@@ -108,9 +108,23 @@
 import { computed } from "vue";
 
 import { useViewImagesStore } from "@/stores/viewImages";
+import { useUserStore } from "@/stores/user";
 const viewImagesStore = useViewImagesStore();
 
-const props = defineProps(["post", "loading", "profilePicture", "firstName", "surname"]);
+const userStore = useUserStore();
+
+const props = defineProps(["post", "loading", "dp", "firstName", "surname", "gender"]);
+
+const profileDp = computed(() => {
+  if (!props.dp && props.gender == "female") {
+    return userStore.female_dp;
+  } else if (!props.dp && props.gender == "male") {
+    return userStore.male_dp;
+  } else {
+    return props.dp;
+  }
+});
+
 const postDate = computed(() => {
   const monthsOfYear = [
     "January",
