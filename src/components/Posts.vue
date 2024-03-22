@@ -90,8 +90,13 @@
       <!--buttons-->
       <div class="flex gap-4">
         <button
-          class="inline-block text-center rounded flex-1 bg-gray-200 hover:bg-gray-200"
-          :class="'text-black'"
+          class="inline-block text-center rounded flex-1 text-black"
+          :class="
+            post.document.likes.indexOf(userStore.uid) != -1
+              ? 'bg-blue-500 hover:bg-blue-700'
+              : 'bg-gray-200 hover:bg-gray-400'
+          "
+          @click.prevent="likePost"
         >
           {{ post.document.likes.length }} <i class="far fa-thumbs-up fa-lg"></i>
         </button>
@@ -101,6 +106,13 @@
       </div>
     </div>
   </article>
+
+  <!--comment-->
+  <div>
+    <div>
+      <img :="profileDp" alt="" />
+    </div>
+  </div>
   <div v-if="!loading && !post">No Posts</div>
 </template>
 
@@ -109,9 +121,11 @@ import { computed } from "vue";
 
 import { useViewImagesStore } from "@/stores/viewImages";
 import { useUserStore } from "@/stores/user";
+import { usePostStore } from "@/stores/post";
 const viewImagesStore = useViewImagesStore();
 
 const userStore = useUserStore();
+const postStore = usePostStore();
 
 const props = defineProps(["post", "loading", "dp", "firstName", "surname", "gender"]);
 
@@ -152,6 +166,10 @@ const postTime = computed(() => {
 
   return time;
 });
+
+async function likePost() {
+  await postStore.likePost(props.post.document.likes, props.post.document.postID, userStore.uid);
+}
 </script>
 
 <style scoped>

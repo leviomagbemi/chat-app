@@ -100,14 +100,46 @@
       <!--buttons-->
       <div class="flex gap-4">
         <button
-          class="inline-block text-center rounded flex-1 bg-gray-200 hover:bg-gray-200"
-          :class="'text-black'"
+          class="inline-block text-center rounded flex-1 text-black"
+          :class="
+            post.document.likes.indexOf(userStore.uid) != -1
+              ? 'bg-blue-500 hover:bg-blue-700'
+              : 'bg-gray-200 hover:bg-gray-400'
+          "
+          @click.prevent="likePost"
         >
           {{ post.document.likes.length }} <i class="far fa-thumbs-up fa-lg"></i>
         </button>
         <button class="inline-block text-center bg-gray-200 hover:bg-gray-200 rounded flex-1">
           {{ post.document.comments.length }} <i class="fas fa-comments"></i>
         </button>
+      </div>
+
+      <!--comment-->
+      <div class="mt-5 flex gap-3">
+        <div class="flex-none w-10 h-10">
+          <img class="w-100 rounded-full" :src="userStore.user.dp" alt="" />
+        </div>
+
+        <div class="grow bg-gray-50 flex">
+          <input
+            v-model="commentInput"
+            class="p-2 bg-gray-50 w-full rounded-full border-none outline-none"
+            type="text"
+            placeholder="Write a comment"
+          />
+
+          <button>
+            <i
+              class="fas fa-paper-plane fa-lg"
+              :class="
+                commentInput
+                  ? 'text-blue-600 hover:text-blue-700'
+                  : 'text-gray-500 hover:text-gray-600'
+              "
+            ></i>
+          </button>
+        </div>
       </div>
     </div>
   </article>
@@ -116,12 +148,15 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useViewImagesStore } from "@/stores/viewImages";
 import { useUserStore } from "@/stores/user";
+import { useFeedPostStore } from "@/stores/feedPost";
 
 const viewImagesStore = useViewImagesStore();
 const userStore = useUserStore();
+const postStore = useFeedPostStore();
+const commentInput = ref("");
 const props = defineProps([
   "post",
   "loading",
@@ -169,6 +204,10 @@ const profileDp = computed(() => {
     return props.dp;
   }
 });
+
+async function likePost() {
+  await postStore.likePost(props.post.document.likes, props.post.document.postID, userStore.uid);
+}
 </script>
 
 <style scoped>

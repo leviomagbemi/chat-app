@@ -1,5 +1,16 @@
 import { defineStore } from "pinia";
-import { getFirestore, getDocs, collection, getDoc, doc, orderBy, query } from "firebase/firestore";
+import {
+  getFirestore,
+  getDocs,
+  collection,
+  getDoc,
+  doc,
+  orderBy,
+  query,
+  updateDoc,
+  arrayUnion,
+  arrayRemove
+} from "firebase/firestore";
 import { getStorage, ref as firebaseRef, getDownloadURL, listAll } from "firebase/storage";
 import firebase from "@/includes/firebase";
 
@@ -60,6 +71,26 @@ export const useFeedPostStore = defineStore("feedPost", {
         this.loading = false;
       } catch (err) {
         console.log(err);
+      }
+    },
+
+    async likePost(postLikes, post_id, user) {
+      const db = getFirestore(firebase);
+
+      const postRef = doc(db, "posts", post_id);
+
+      if (postLikes.indexOf(user) != -1) {
+        //remove like
+        postLikes.splice(postLikes.indexOf(user), 1);
+        await updateDoc(postRef, {
+          likes: arrayRemove(user)
+        });
+      } else {
+        //add like
+        postLikes.push(user);
+        await updateDoc(postRef, {
+          likes: arrayUnion(user)
+        });
       }
     }
   }
