@@ -24,7 +24,7 @@
     <div class="p-5 flex-col flex gap-4 md:flex-row fade" v-else>
       <!--Profile Image-->
       <div class="w-40 h-40 relative mx-auto">
-        <img class="rounded" :src="dp" alt="" />
+        <img class="rounded" :src="profilePic" alt="" />
         <button
           class="absolute top-32 right-2 inline-block p-5 bg-blue-600 rounded-full text-white text-center hover:bg-blue-500"
           @click="uploadModal = true"
@@ -122,7 +122,7 @@ const editProfile = ref(false);
 const friends = ref([]);
 const friendsData = ref([]);
 
-const dp = computed(() => {
+const profilePic = computed(() => {
   if (!userStore.user.dp && userStore.user.gender == "female") {
     return userStore.female_dp;
   } else if (!userStore.user.dp && userStore.user.gender == "male") {

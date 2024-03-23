@@ -104,21 +104,20 @@
           {{ post.document.comments.length }} <i class="fas fa-comments"></i>
         </button>
       </div>
+
+      <!--comment-->
+      <div>
+        <PostComments />
+      </div>
     </div>
   </article>
 
-  <!--comment-->
-  <div>
-    <div>
-      <img :="profileDp" alt="" />
-    </div>
-  </div>
   <div v-if="!loading && !post">No Posts</div>
 </template>
 
 <script setup>
 import { computed } from "vue";
-
+import PostComments from "./CreatePostComment.vue";
 import { useViewImagesStore } from "@/stores/viewImages";
 import { useUserStore } from "@/stores/user";
 import { usePostStore } from "@/stores/post";

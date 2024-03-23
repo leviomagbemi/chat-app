@@ -100,11 +100,11 @@
       <!--buttons-->
       <div class="flex gap-4">
         <button
-          class="inline-block text-center rounded flex-1 text-black"
+          class="inline-block text-center rounded flex-1"
           :class="
             post.document.likes.indexOf(userStore.uid) != -1
-              ? 'bg-blue-500 hover:bg-blue-700'
-              : 'bg-gray-200 hover:bg-gray-400'
+              ? 'bg-blue-500 text-white hover:bg-blue-700'
+              : 'bg-gray-200 text-black hover:bg-gray-400'
           "
           @click.prevent="likePost"
         >
@@ -116,30 +116,19 @@
       </div>
 
       <!--comment-->
-      <div class="mt-5 flex gap-3">
-        <div class="flex-none w-10 h-10">
-          <img class="w-100 rounded-full" :src="userStore.user.dp" alt="" />
-        </div>
+      <div>
+        <CreatePostComment
+          :post="post"
+          @update-comment="(newComment) => modifiedComments.push(newComment)"
+        />
+      </div>
 
-        <div class="grow bg-gray-50 flex">
-          <input
-            v-model="commentInput"
-            class="p-2 bg-gray-50 w-full rounded-full border-none outline-none"
-            type="text"
-            placeholder="Write a comment"
-          />
-
-          <button>
-            <i
-              class="fas fa-paper-plane fa-lg"
-              :class="
-                commentInput
-                  ? 'text-blue-600 hover:text-blue-700'
-                  : 'text-gray-500 hover:text-gray-600'
-              "
-            ></i>
-          </button>
-        </div>
+      <div v-if="modifiedComments.length > 0">
+        <postComments
+          v-for="comment in modifiedComments"
+          :key="comment.commentID"
+          :comment="comment"
+        />
       </div>
     </div>
   </article>
@@ -148,15 +137,19 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
+import CreatePostComment from "./CreatePostComment.vue";
+import postComments from "./postComments.vue";
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
+import firebase from "@/includes/firebase";
 import { useViewImagesStore } from "@/stores/viewImages";
 import { useUserStore } from "@/stores/user";
-import { useFeedPostStore } from "@/stores/feedPost";
+import { useLikeCommentStore } from "@/stores/likeComments";
 
 const viewImagesStore = useViewImagesStore();
 const userStore = useUserStore();
-const postStore = useFeedPostStore();
-const commentInput = ref("");
+const likeCommentStore = useLikeCommentStore();
+const modifiedComments = ref([]);
 const props = defineProps([
   "post",
   "loading",
@@ -195,6 +188,24 @@ const postTime = computed(() => {
   return time;
 });
 
+onMounted(async () => {
+  if (props.post) {
+    const db = getFirestore(firebase);
+
+    const userRef = collection(db, "users");
+
+    props.post.document.comments.forEach(async (comment) => {
+      const userQuery = query(userRef, where("user_id", "==", comment.user));
+
+      const querySnapshot = await getDocs(userQuery);
+
+      querySnapshot.forEach((doc) => {
+        modifiedComments.value.push({ ...comment, user: doc.data() });
+      });
+    });
+  }
+});
+
 const profileDp = computed(() => {
   if (!props.dp && props.gender == "female") {
     return userStore.female_dp;
@@ -206,7 +217,11 @@ const profileDp = computed(() => {
 });
 
 async function likePost() {
-  await postStore.likePost(props.post.document.likes, props.post.document.postID, userStore.uid);
+  await likeCommentStore.likePost(
+    props.post.document.likes,
+    props.post.document.postID,
+    userStore.uid
+  );
 }
 </script>
 
