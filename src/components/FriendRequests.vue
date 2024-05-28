@@ -36,8 +36,8 @@
 
 <script setup>
 import { computed, ref } from "vue";
-import { useUserStore } from "@/stores/user.js";
-import { useFriendStore } from "@/stores/friend.js";
+import { useUserStore } from "@/stores/userStore";
+import { useFriendStore } from "@/stores/friendStore";
 
 const props = defineProps(["friendRequest"]);
 

@@ -38,8 +38,8 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { getFirestore, getDocs, collection } from "firebase/firestore";
-import { useUserStore } from "@/stores/user.js";
-import { useFriendStore } from "@/stores/friend.js";
+import { useUserStore } from "@/stores/userStore";
+import { useFriendStore } from "@/stores/friendStore";
 import firebase from "@/includes/firebase";
 
 const props = defineProps(["discoverFriends"]);

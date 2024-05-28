@@ -18,9 +18,9 @@
 <script setup>
 import AppHeader from "@/components/AppHeader.vue";
 import AppMenu from "@/components/AppMenu.vue";
-import { useMenuStore } from "@/stores/menu";
-import { useUserStore } from "@/stores/user";
-import { useFeedPostStore } from "@/stores/feedPost";
+import { useMenuStore } from "@/stores/menuStore";
+import { useUserStore } from "@/stores/userStore";
+import { useFeedPostStore } from "@/stores/feedPostStore";
 import { ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 

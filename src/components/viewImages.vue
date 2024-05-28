@@ -31,7 +31,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { useViewImagesStore } from "@/stores/viewImages";
+import { useViewImagesStore } from "@/stores/viewImageStore";
 
 const viewImagesStore = useViewImagesStore();
 // const index = ref(0);

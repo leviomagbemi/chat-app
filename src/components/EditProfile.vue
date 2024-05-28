@@ -70,7 +70,7 @@
 import { ref } from "vue";
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import firebase from "@/includes/firebase";
-import { useUserStore } from "@/stores/user";
+import { useUserStore } from "@/stores/userStore";
 
 const userStore = useUserStore();
 const props = defineProps(["editProfile"]);

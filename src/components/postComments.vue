@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { useUserStore } from "@/stores/user.js";
+import { useUserStore } from "@/stores/userStore";
 import { computed } from "vue";
 
 const userStore = useUserStore();

@@ -26,7 +26,7 @@
 
 <script setup>
 import { computed } from "vue";
-import { useUserStore } from "@/stores/user";
+import { useUserStore } from "@/stores/userStore";
 import AppNav from "./AppNav.vue";
 
 const userStore = useUserStore();

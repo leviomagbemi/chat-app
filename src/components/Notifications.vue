@@ -18,7 +18,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/user.js";
+import { useUserStore } from "@/stores/userStore";
 import { getFirestore, updateDoc, doc } from "firebase/firestore";
 import firebase from "@/includes/firebase";
 import { computed } from "vue";

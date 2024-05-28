@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useMenuStore } from "../stores/menu";
+import { useMenuStore } from "../stores/menuStore";
 
 const routes = [
   {

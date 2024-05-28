@@ -100,10 +100,10 @@
 import UploadProfilePic from "@/components/UploadProfilePic.vue";
 import EditProfile from "@/components/EditProfile.vue";
 import viewImages from "@/components/viewImages.vue";
-import { useUserStore } from "@/stores/user.js";
-import { usePostStore } from "@/stores/post.js";
-import { useFriendStore } from "@/stores/friend";
-import { useViewImagesStore } from "@/stores/viewImages";
+import { useUserStore } from "@/stores/userStore";
+import { usePostStore } from "@/stores/postStore";
+import { useFriendStore } from "@/stores/friendStore";
+import { useViewImagesStore } from "@/stores/viewImageStore";
 import { onBeforeMount, ref, computed } from "vue";
 import Posts from "@/components/Posts.vue";
 import UserFriends from "@/components/UserFriends.vue";

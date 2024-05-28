@@ -28,8 +28,8 @@ import FeedPosts from "@/components/FeedPosts.vue";
 import CreatePost from "@/components/CreatePost.vue";
 import viewImages from "@/components/viewImages.vue";
 
-import { useViewImagesStore } from "@/stores/viewImages";
-import { useFeedPostStore } from "@/stores/feedPost";
+import { useViewImagesStore } from "@/stores/viewImageStore";
+import { useFeedPostStore } from "@/stores/feedPostStore";
 
 const feedPostStore = useFeedPostStore();
 const viewImagesStore = useViewImagesStore();

@@ -26,8 +26,8 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { useUserStore } from "@/stores/user";
-import { useLikeCommentStore } from "@/stores/likeComments";
+import { useUserStore } from "@/stores/userStore";
+import { useLikeCommentStore } from "@/stores/likeCommentStore";
 
 const props = defineProps(["post"]);
 const emit = defineEmits(["updateComment"]);

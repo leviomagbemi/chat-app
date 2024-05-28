@@ -100,7 +100,7 @@
 import EmailInput from "./EmailInput.vue";
 import PasswordInput from "./PasswordInput.vue";
 import { ref } from "vue";
-import { useUserStore } from "@/stores/user.js";
+import { useUserStore } from "@/stores/userStore.js";
 
 const processingSignUp = ref(false);
 const registered = ref(null);

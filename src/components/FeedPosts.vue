@@ -142,9 +142,9 @@ import CreatePostComment from "./CreatePostComment.vue";
 import postComments from "./postComments.vue";
 import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 import firebase from "@/includes/firebase";
-import { useViewImagesStore } from "@/stores/viewImages";
-import { useUserStore } from "@/stores/user";
-import { useLikeCommentStore } from "@/stores/likeComments";
+import { useViewImagesStore } from "@/stores/viewImageStore";
+import { useUserStore } from "@/stores/userStore";
+import { useLikeCommentStore } from "@/stores/likeCommentStore";
 
 const viewImagesStore = useViewImagesStore();
 const userStore = useUserStore();

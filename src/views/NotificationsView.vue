@@ -15,7 +15,7 @@
 <script setup>
 import Notifications from "@/components/Notifications.vue";
 import { ref, onBeforeMount, watchEffect } from "vue";
-import { useUserStore } from "@/stores/user.js";
+import { useUserStore } from "@/stores/userStore";
 import {
   getFirestore,
   getDocs,

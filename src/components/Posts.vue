@@ -118,9 +118,9 @@
 <script setup>
 import { computed } from "vue";
 import PostComments from "./CreatePostComment.vue";
-import { useViewImagesStore } from "@/stores/viewImages";
-import { useUserStore } from "@/stores/user";
-import { usePostStore } from "@/stores/post";
+import { useViewImagesStore } from "@/stores/viewImageStore";
+import { useUserStore } from "@/stores/userStore";
+import { usePostStore } from "@/stores/postStore";
 const viewImagesStore = useViewImagesStore();
 
 const userStore = useUserStore();

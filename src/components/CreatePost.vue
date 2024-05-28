@@ -102,7 +102,7 @@
 </template>
 
 <script setup>
-import { useUserStore } from "@/stores/user.js";
+import { useUserStore } from "@/stores/userStore";
 import { ref, computed } from "vue";
 import { getStorage, ref as firebaseRef, uploadBytes } from "firebase/storage";
 import { getFirestore, setDoc, doc } from "firebase/firestore";

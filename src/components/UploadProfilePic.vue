@@ -63,7 +63,7 @@ import {
 } from "firebase/storage";
 import { setDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
 import firebase from "@/includes/firebase";
-import { useUserStore } from "@/stores/user";
+import { useUserStore } from "@/stores/userStore";
 
 const file = ref({});
 const fileRef = ref(null);

@@ -43,8 +43,8 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { useFriendStore } from "@/stores/friend";
-import { useUserStore } from "@/stores/user";
+import { useFriendStore } from "@/stores/friendStore";
+import { useUserStore } from "@/stores/userStore";
 import DiscoverFriends from "@/components/DiscoverFriends.vue";
 import FriendRequests from "@/components/FriendRequests.vue";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
