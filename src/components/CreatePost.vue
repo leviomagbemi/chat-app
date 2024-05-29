@@ -105,7 +105,7 @@
 import { useUserStore } from "@/stores/userStore";
 import { ref, computed } from "vue";
 import { getStorage, ref as firebaseRef, uploadBytes } from "firebase/storage";
-import { getFirestore, setDoc, doc } from "firebase/firestore";
+import { getFirestore, setDoc, doc, serverTimestamp } from "firebase/firestore";
 import firebase from "@/includes/firebase";
 
 const maxErr = ref("");
@@ -154,16 +154,13 @@ async function submitPost(e) {
     const db = getFirestore(firebase);
 
     const postID = Math.random().toString(16).slice(2);
-    const postDate = new Date();
 
     await setDoc(doc(db, "posts", `${postID}`), {
       text,
-      comments: [],
       likes: [],
       userID: userStore.uid,
       postID,
-      date: postDate.toLocaleDateString(),
-      time: postDate.toLocaleTimeString()
+      date: serverTimestamp()
     });
 
     const files = Array.from(images.value);

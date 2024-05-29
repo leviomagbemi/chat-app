@@ -37,7 +37,7 @@
         <div>
           <h4 class="flex-1 font-semibold text-md md:text-xl">{{ firstName }} {{ surname }}</h4>
           <p class="text-xs md:text-sm font-semibold text-gray-400">
-            {{ postDate }} {{ postTime }}
+            {{ post.date }}
           </p>
         </div>
       </div>
@@ -101,7 +101,7 @@
           {{ post.document.likes.length }} <i class="far fa-thumbs-up fa-lg"></i>
         </button>
         <button class="inline-block text-center bg-gray-200 hover:bg-gray-200 rounded flex-1">
-          {{ post.document.comments.length }} <i class="fas fa-comments"></i>
+          <!-- {{ post.document.comments.length }} <i class="fas fa-comments"></i> -->
         </button>
       </div>
 
@@ -136,34 +136,6 @@ const profileDp = computed(() => {
   } else {
     return props.dp;
   }
-});
-
-const postDate = computed(() => {
-  const monthsOfYear = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
-  const dateArray = props.post.document.date.split("/");
-  const date = `${monthsOfYear[dateArray[0] - 1]} ${dateArray[1]}, ${dateArray[2]}`;
-
-  return date;
-});
-
-const postTime = computed(() => {
-  const timeArray = props.post.document.time.split(":");
-  const time = `${timeArray[0]}:${timeArray[1]} ${timeArray[2].slice(3)}`;
-
-  return time;
 });
 
 async function likePost() {

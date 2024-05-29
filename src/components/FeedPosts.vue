@@ -47,7 +47,7 @@
             </h4>
           </router-link>
           <p class="text-xs md:text-sm font-semibold text-gray-400">
-            {{ postDate }} {{ postTime }}
+            {{ postTime }}
           </p>
         </div>
       </div>
@@ -111,7 +111,7 @@
           {{ post.document.likes.length }} <i class="far fa-thumbs-up fa-lg"></i>
         </button>
         <button class="inline-block text-center bg-gray-200 hover:bg-gray-200 rounded flex-1">
-          {{ post.document.comments.length }} <i class="fas fa-comments"></i>
+          <!-- {{ post.document.comments.length }} <i class="fas fa-comments"></i> -->
         </button>
       </div>
 
@@ -140,7 +140,7 @@
 import { computed, ref, onMounted } from "vue";
 import CreatePostComment from "./CreatePostComment.vue";
 import postComments from "./postComments.vue";
-import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
+import { getFirestore, collection, query, where, getDocs, Timestamp } from "firebase/firestore";
 import firebase from "@/includes/firebase";
 import { useViewImagesStore } from "@/stores/viewImageStore";
 import { useUserStore } from "@/stores/userStore";
@@ -150,6 +150,7 @@ const viewImagesStore = useViewImagesStore();
 const userStore = useUserStore();
 const likeCommentStore = useLikeCommentStore();
 const modifiedComments = ref([]);
+const timeStamp = new Timestamp();
 const props = defineProps([
   "post",
   "loading",
@@ -159,34 +160,6 @@ const props = defineProps([
   "profile_id",
   "gender"
 ]);
-
-const postDate = computed(() => {
-  const monthsOfYear = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
-  const dateArray = props.post.document.date.split("/");
-  const date = `${monthsOfYear[dateArray[0] - 1]} ${dateArray[1]}, ${dateArray[2]}`;
-
-  return date;
-});
-
-const postTime = computed(() => {
-  const timeArray = props.post.document.time.split(":");
-  const time = `${timeArray[0]}:${timeArray[1]} ${timeArray[2].slice(3)}`;
-
-  return time;
-});
 
 onMounted(async () => {
   if (props.post) {
@@ -204,6 +177,16 @@ onMounted(async () => {
       });
     });
   }
+});
+
+const postTime = computed(() => {
+  timeStamp.seconds = props.post.document.date.seconds;
+  timeStamp.nanoseconds = props.post.document.date.nanoseconds;
+  const date = timeStamp.toDate().toDateString();
+
+  const time = timeStamp.toDate().toLocaleTimeString();
+
+  return `${date}, ${time}`;
 });
 
 const profileDp = computed(() => {
