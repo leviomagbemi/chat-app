@@ -6,9 +6,11 @@ import firebase from "@/includes/firebase";
 export const useFriendStore = defineStore("friends", () => {
   const discoverFriends = ref([]);
   const requests = ref([]);
+  const requestsData = ref([]);
   const userFriendsArr = ref([]);
   const ids = ref([]);
   const show = ref(true);
+  const loaded = ref(false);
 
   async function sendFriendReq(friend, userStore, req) {
     const db = getFirestore(firebase);
@@ -157,9 +159,11 @@ export const useFriendStore = defineStore("friends", () => {
   return {
     discoverFriends,
     requests,
+    requestsData,
     userFriendsArr,
     ids,
     show,
+    loaded,
     sendFriendReq,
     checkFriends,
     acceptFriend,
