@@ -33,6 +33,7 @@ export const useUserStore = defineStore("user", () => {
       values.email,
       values.password
     );
+    console.log(createNewUser.user);
 
     await setDoc(doc(db, "users", createNewUser.user.uid), {
       firstName: values["First Name"],
@@ -40,7 +41,7 @@ export const useUserStore = defineStore("user", () => {
       email: values.email,
       dob: values.dob,
       gender: values.gender,
-      user_id: createUser.user.uid,
+      user_id: createNewUser.user.uid,
       profile_id
     });
   }

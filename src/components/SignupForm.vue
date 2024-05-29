@@ -106,7 +106,7 @@ const processingSignUp = ref(false);
 const registered = ref(null);
 const formAlertMessage = ref("");
 const formAlertClass = ref("bg-green-300 text-white");
-const user = useUserStore();
+const userStore = useUserStore();
 
 //event emits
 const emit = defineEmits(["loginModal"]);
@@ -128,7 +128,7 @@ async function register(values) {
   processingSignUp.value = true;
   registered.value = false;
   try {
-    await user.createUser(values);
+    await userStore.createUser(values);
     registered.value = true;
     formAlertClass.value = "bg-green-500 text-white";
     formAlertMessage.value = "Successfully Registered";
@@ -141,6 +141,7 @@ async function register(values) {
         break;
       default:
         formAlertMessage.value = err;
+        console.log(err);
     }
     processingSignUp.value = false;
     registered.value = null;

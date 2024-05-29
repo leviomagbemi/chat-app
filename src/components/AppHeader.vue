@@ -45,6 +45,9 @@ const dp = computed(() => {
 </script>
 
 <style scoped>
+[v-cloak] {
+  display: none;
+}
 img {
   width: 100%;
   height: 100%;
