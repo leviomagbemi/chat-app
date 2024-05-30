@@ -1,13 +1,22 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { getFirestore, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  setDoc,
+  getDocs,
+  collection
+} from "firebase/firestore";
 import firebase from "@/includes/firebase";
 
 export const useLikeCommentStore = defineStore("likeComment", () => {
-  async function likePost(postLikes, post_id, user) {
+  async function likePost(postLikes, postID, user) {
     const db = getFirestore(firebase);
 
-    const postRef = doc(db, "posts", post_id);
+    const postRef = doc(db, "posts", postID);
 
     if (postLikes.indexOf(user) != -1) {
       //remove like
@@ -24,39 +33,29 @@ export const useLikeCommentStore = defineStore("likeComment", () => {
     }
   }
 
-  async function postComment(commentsList, post_id, user, comment, modifiedComments) {
+  async function postComment(commentInput, post_id, user) {
     const db = getFirestore(firebase);
 
-    const postRef = doc(db, "posts", post_id);
     const commentID = Math.random().toString(16).slice(2);
-
-    const userComment = {
-      user: user,
-      comment: comment.value,
-      commentID: commentID,
-      postID: post_id
-    };
-
-    //add comment
-
-    commentsList.push(userComment);
-    await updateDoc(postRef, {
-      comments: arrayUnion(userComment)
+    await setDoc(doc(db, "posts", post_id, "comments", commentID), {
+      comment: commentInput,
+      commentID,
+      user
     });
+  }
 
-    const userRef = doc(db, "users", user);
+  async function getComments(postID, comments) {
+    const db = getFirestore(firebase);
 
-    const docSnap = await getDoc(userRef);
+    const commentsRef = collection(db, "posts", postID, "comments");
+    const snapshot = await getDocs(commentsRef);
 
-    if (docSnap.exists()) {
-      modifiedComments.value = { comment: comment.value, user: docSnap.data() };
-    }
-
-    comment.value = "";
+    snapshot.forEach((doc) => comments.push(doc.data()));
   }
 
   return {
     likePost,
-    postComment
+    postComment,
+    getComments
   };
 });

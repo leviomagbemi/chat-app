@@ -54,10 +54,10 @@ export const usePostStore = defineStore("posts", () => {
     loading.value = false;
   }
 
-  async function likePost(postLikes, post_id, user) {
+  async function likePost(postLikes, postID, user) {
     const db = getFirestore(firebase);
 
-    const postRef = doc(db, "posts", post_id);
+    const postRef = doc(db, "posts", postID);
 
     if (postLikes.indexOf(user) != -1) {
       //remove like

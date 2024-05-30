@@ -38,7 +38,7 @@
           <router-link
             :to="
               post.document.userID !== userStore.uid
-                ? { name: 'discover-profile', params: { profile_id: profile_id } }
+                ? { name: 'discover-profile', params: { profileID: profileID } }
                 : { name: 'profile' }
             "
           >
@@ -111,7 +111,7 @@
           {{ post.document.likes.length }} <i class="far fa-thumbs-up fa-lg"></i>
         </button>
         <button class="inline-block text-center bg-gray-200 hover:bg-gray-200 rounded flex-1">
-          <!-- {{ post.document.comments.length }} <i class="fas fa-comments"></i> -->
+          {{ comments.length }} <i class="fas fa-comments"></i>
         </button>
       </div>
 
@@ -123,12 +123,8 @@
         />
       </div>
 
-      <div v-if="modifiedComments.length > 0">
-        <postComments
-          v-for="comment in modifiedComments"
-          :key="comment.commentID"
-          :comment="comment"
-        />
+      <div v-if="comments.length > 0">
+        <postComments v-for="comment in comments" :key="comment.commentID" :comment="comment" />
       </div>
     </div>
   </article>
@@ -149,33 +145,13 @@ import { useLikeCommentStore } from "@/stores/likeCommentStore";
 const viewImagesStore = useViewImagesStore();
 const userStore = useUserStore();
 const likeCommentStore = useLikeCommentStore();
-const modifiedComments = ref([]);
+const comments = ref([]);
 const timeStamp = new Timestamp();
-const props = defineProps([
-  "post",
-  "loading",
-  "dp",
-  "firstName",
-  "surname",
-  "profile_id",
-  "gender"
-]);
+const props = defineProps(["post", "loading", "dp", "firstName", "surname", "profileID", "gender"]);
 
 onMounted(async () => {
   if (props.post) {
-    const db = getFirestore(firebase);
-
-    const userRef = collection(db, "users");
-
-    props.post.document.comments.forEach(async (comment) => {
-      const userQuery = query(userRef, where("user_id", "==", comment.user));
-
-      const querySnapshot = await getDocs(userQuery);
-
-      querySnapshot.forEach((doc) => {
-        modifiedComments.value.push({ ...comment, user: doc.data() });
-      });
-    });
+    likeCommentStore.getComments(props.post.document.postID, comments.value);
   }
 });
 

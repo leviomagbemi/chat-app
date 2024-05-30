@@ -33,7 +33,6 @@ const props = defineProps(["post"]);
 const emit = defineEmits(["updateComment"]);
 const userStore = useUserStore();
 const likeCommentStore = useLikeCommentStore();
-const modifiedComments = ref("");
 const commentInput = ref("");
 
 const dp = computed(() => {
@@ -49,14 +48,12 @@ const dp = computed(() => {
 async function submitComment() {
   if (commentInput.value)
     await likeCommentStore.postComment(
-      props.post.document.comments,
+      commentInput.value,
       props.post.document.postID,
-      userStore.uid,
-      commentInput,
-      modifiedComments
+      props.post.user
     );
 
-  emit("updateComment", modifiedComments.value);
+  commentInput.value = "";
 }
 </script>
 

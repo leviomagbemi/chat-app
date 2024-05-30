@@ -26,14 +26,13 @@ export const useUserStore = defineStore("user", () => {
 
     const userCred = getAuth();
 
-    const profile_id = Math.random().toString(16).slice(2);
+    const profileID = Math.random().toString(16).slice(2);
 
     const createNewUser = await createUserWithEmailAndPassword(
       userCred,
       values.email,
       values.password
     );
-    console.log(createNewUser.user);
 
     await setDoc(doc(db, "users", createNewUser.user.uid), {
       firstName: values["First Name"],
@@ -41,8 +40,8 @@ export const useUserStore = defineStore("user", () => {
       email: values.email,
       dob: values.dob,
       gender: values.gender,
-      user_id: createNewUser.user.uid,
-      profile_id
+      userID: createNewUser.user.uid,
+      profileID
     });
   }
 
