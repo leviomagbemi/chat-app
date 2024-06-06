@@ -60,13 +60,13 @@ const dp = computed(() => {
 onMounted(async () => {
   // check if current user is in friendReq list of any user
   const db = getFirestore(firebase);
-  const ref = collection(db, "users", props.discoverFriends.user_id, "friendReq");
+  const ref = collection(db, "users", props.discoverFriends.userID, "friendReq");
 
   const snapshot = await getDocs(ref);
   for (let doc of snapshot.docs) {
     const document = doc.data();
 
-    if (document.user_id === userStore.uid) {
+    if (document.userID === userStore.uid) {
       req.value = true;
     }
   }

@@ -1,47 +1,38 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import {
-  getFirestore,
-  doc,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-  setDoc,
-  getDocs,
-  collection
-} from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, onSnapshot } from "firebase/firestore";
 import firebase from "@/includes/firebase";
 
 export const useLikeCommentStore = defineStore("likeComment", () => {
-  async function likePost(postLikes, postID, user) {
+  async function likePost(postID, user) {
     const db = getFirestore(firebase);
 
-    const postRef = doc(db, "posts", postID);
-
-    if (postLikes.indexOf(user) != -1) {
-      //remove like
-      postLikes.splice(postLikes.indexOf(user), 1);
-      await updateDoc(postRef, {
-        likes: arrayRemove(user)
-      });
-    } else {
-      //add like
-      postLikes.push(user);
-      await updateDoc(postRef, {
-        likes: arrayUnion(user)
-      });
-    }
+    const likeRef = doc(db, "posts", postID, "likes", user.userID);
+    await setDoc(likeRef, {
+      user
+    });
   }
 
-  async function postComment(commentInput, post_id, user) {
+  // realtime comment
+  function listenForComments(postID, commentID, comment) {
+    const db = getFirestore(firebase);
+    const commentsRef = doc(db, "posts", postID, "comments", commentID);
+    onSnapshot(commentsRef, (doc) => {
+      comment.push(doc.data());
+    });
+  }
+
+  async function postComment(commentInput, postID, user) {
     const db = getFirestore(firebase);
 
     const commentID = Math.random().toString(16).slice(2);
-    await setDoc(doc(db, "posts", post_id, "comments", commentID), {
+    await setDoc(doc(db, "posts", postID, "comments", commentID), {
       comment: commentInput,
       commentID,
       user
     });
+
+    return commentID;
   }
 
   async function getComments(postID, comments) {
@@ -56,6 +47,7 @@ export const useLikeCommentStore = defineStore("likeComment", () => {
   return {
     likePost,
     postComment,
-    getComments
+    getComments,
+    listenForComments
   };
 });

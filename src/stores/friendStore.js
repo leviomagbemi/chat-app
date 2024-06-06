@@ -15,18 +15,18 @@ export const useFriendStore = defineStore("friends", () => {
   async function sendFriendReq(friend, userStore, req) {
     const db = getFirestore(firebase);
 
-    await setDoc(doc(db, "users", friend.user_id, "friendReq", userStore.uid), {
-      user_id: userStore.user.user_id,
-      profile_id: userStore.user.profile_id
+    await setDoc(doc(db, "users", friend.userID, "friendReq", userStore.uid), {
+      userID: userStore.user.userID,
+      profileID: userStore.user.profileID
     });
 
     const notificationID = Math.random().toString(16).slice(2);
     const notificationDate = new Date();
 
-    await setDoc(doc(db, "users", friend.user_id, "notifications", notificationID), {
+    await setDoc(doc(db, "users", friend.userID, "notifications", notificationID), {
       message: `${userStore.user.firstName} ${userStore.user.surname} wants to be your friend`,
-      user_id: userStore.user.user_id,
-      profile_id: userStore.user.profile_id,
+      userID: userStore.user.userID,
+      profileID: userStore.user.profileID,
       id: notificationID,
       date: notificationDate.toLocaleDateString(),
       time: notificationDate.toLocaleTimeString(),
@@ -44,36 +44,36 @@ export const useFriendStore = defineStore("friends", () => {
 
     isFriend.value = snapshot.docs
       .map((doc) => doc.data())
-      .filter((doc) => doc.user_id === userStore.uid);
+      .filter((doc) => doc.userID === userStore.uid);
   }
 
   async function acceptFriend(friendReq, confirm, userStore) {
     const db = getFirestore(firebase);
 
     // delete request sender from user friendReq storage
-    await deleteDoc(doc(db, "users", userStore.uid, "friendReq", friendReq.user_id));
+    await deleteDoc(doc(db, "users", userStore.uid, "friendReq", friendReq.userID));
 
     // to current user friends
-    const user = doc(db, "users", userStore.uid, "friends", friendReq.user_id);
+    const user = doc(db, "users", userStore.uid, "friends", friendReq.userID);
     await setDoc(user, {
-      user_id: friendReq.user_id,
-      profile_id: friendReq.profile_id
+      userID: friendReq.userID,
+      profileID: friendReq.profileID
     });
 
     // add current user to request sender friends
-    const currentUser = doc(db, "users", friendReq.user_id, "friends", userStore.uid);
+    const currentUser = doc(db, "users", friendReq.userID, "friends", userStore.uid);
     await setDoc(currentUser, {
-      user_id: userStore.user.user_id,
-      profile_id: userStore.user.profile_id
+      userID: userStore.user.userID,
+      profileID: userStore.user.profileID
     });
 
     // send notification to request sender
     const notificationID = Math.random().toString(16).slice(2);
     const notificationDate = new Date();
-    await setDoc(doc(db, "users", friendReq.user_id, "notifications", notificationID), {
+    await setDoc(doc(db, "users", friendReq.userID, "notifications", notificationID), {
       message: `${userStore.user.firstName} ${userStore.user.surname} accepted your friend request`,
-      user_id: userStore.user.user_id,
-      profile_id: userStore.user.profile_id,
+      userID: userStore.user.userID,
+      profileID: userStore.user.profileID,
       id: notificationID,
       date: notificationDate.toLocaleDateString(),
       time: notificationDate.toLocaleTimeString(),
@@ -86,13 +86,13 @@ export const useFriendStore = defineStore("friends", () => {
   async function cancelFriendReq(friend, userStore) {
     const db = getFirestore(firebase);
 
-    await deleteDoc(doc(db, "users", friend.user_id, "friendReq", userStore.uid));
+    await deleteDoc(doc(db, "users", friend.userID, "friendReq", userStore.uid));
   }
 
   async function deleteFriendReq(friend, userStore) {
     const db = getFirestore(firebase);
 
-    await deleteDoc(doc(db, "users", userStore.uid, "friendReq", friend.user_id));
+    await deleteDoc(doc(db, "users", userStore.uid, "friendReq", friend.userID));
   }
 
   async function userFriends(userStore, friends) {
@@ -104,7 +104,7 @@ export const useFriendStore = defineStore("friends", () => {
 
     for (let doc of snapshot.docs) {
       const document = doc.data();
-      friends.value.push(document.user_id);
+      friends.value.push(document.userID);
     }
   }
 
@@ -122,7 +122,7 @@ export const useFriendStore = defineStore("friends", () => {
 
     for (let doc of userFriendsSnapshot.docs) {
       const document = doc.data();
-      userFriendsArr.value.push(document.user_id);
+      userFriendsArr.value.push(document.userID);
     }
 
     // fetch users
@@ -138,7 +138,7 @@ export const useFriendStore = defineStore("friends", () => {
         for (let doc of reqSnapshot.docs) {
           const document = doc.data();
           requests.value.push(document);
-          ids.value.push(document.user_id);
+          ids.value.push(document.userID);
         }
         show.value = true;
       }
@@ -148,9 +148,9 @@ export const useFriendStore = defineStore("friends", () => {
         .map((doc) => doc.data())
         .filter((friend) => {
           return (
-            friend.user_id !== userStore.uid &&
-            !ids.value.includes(friend.user_id) &&
-            !userFriendsArr.value.includes(friend.user_id)
+            friend.userID !== userStore.uid &&
+            !ids.value.includes(friend.userID) &&
+            !userFriendsArr.value.includes(friend.userID)
           );
         });
     }

@@ -21,7 +21,7 @@
     </h1>
     <FriendRequests
       v-for="request in friendStore.requestsData"
-      :key="request.profile_id"
+      :key="request.profileID"
       :friendRequest="request"
     />
   </div>
@@ -35,7 +35,7 @@
     </h1>
     <DiscoverFriends
       v-for="discoverFriend in friendStore.discoverFriends"
-      :key="discoverFriend.profile_id"
+      :key="discoverFriend.profileID"
       :discoverFriends="discoverFriend"
     />
   </div>
@@ -59,7 +59,7 @@ onMounted(async () => {
   if (!friendStore.loaded) {
     await friendStore.newFriends(userStore);
     friendStore.requests.forEach(async (request) => {
-      const ref = doc(db, "users", request.user_id);
+      const ref = doc(db, "users", request.userID);
       const user = await getDoc(ref);
 
       friendStore.requestsData.push(user.data());

@@ -7,7 +7,7 @@
           No Posts. Make a post or add friends to see their posts
         </h1>
       </div>
-      <FeedPosts
+      <Posts
         v-for="post in feedPostStore.feedPosts"
         :key="post.postID"
         :post="post"
@@ -15,7 +15,7 @@
         :dp="post.user.dp"
         :firstName="post.user.firstName"
         :surname="post.user.surname"
-        :profile_id="post.user['profile_id']"
+        :profileID="post.user['profileID']"
         :gender="post.user.gender"
       />
     </main>
@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import FeedPosts from "@/components/FeedPosts.vue";
+import Posts from "@/components/Posts.vue";
 import CreatePost from "@/components/CreatePost.vue";
 import viewImages from "@/components/viewImages.vue";
 

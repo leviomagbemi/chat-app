@@ -23,7 +23,7 @@ export const useFeedPostStore = defineStore("feedPost", () => {
       for (let doc of userSnapshot.docs) {
         const document = doc.data();
 
-        friends.push(document.user_id);
+        friends.push(document.userID);
       }
 
       const ref = query(collection(db, "posts"), orderBy("date", "desc"));

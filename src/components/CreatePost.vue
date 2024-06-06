@@ -44,6 +44,7 @@
         </div>
 
         <textarea
+          v-model="postText"
           name="text"
           id="text"
           ref="textField"
@@ -74,7 +75,13 @@
             <img :src="image" alt="" class="w-full grid-item" />
           </div>
         </div>
-        <button class="w-full bg-blue-600 rounded text-white font-semibold my-3 py-3">Post</button>
+        <button
+          class="w-full rounded text-white font-semibold my-3 py-3"
+          :disabled="postText == '' ? 'true' : 'false'"
+          :class="postText == '' ? 'bg-grey-600' : 'bg-blue-600'"
+        >
+          Post
+        </button>
       </form>
     </div>
 
@@ -116,6 +123,7 @@ const images = ref([]);
 const thumbnail = ref([]);
 const overlayHeight = ref(100);
 const textField = ref(null);
+const postText = ref("");
 
 const userStore = useUserStore();
 
@@ -157,7 +165,6 @@ async function submitPost(e) {
 
     await setDoc(doc(db, "posts", `${postID}`), {
       text,
-      likes: [],
       userID: userStore.uid,
       postID,
       date: serverTimestamp()

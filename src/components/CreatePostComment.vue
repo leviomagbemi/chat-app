@@ -46,14 +46,24 @@ const dp = computed(() => {
 });
 
 async function submitComment() {
+  let commentID;
+
   if (commentInput.value)
-    await likeCommentStore.postComment(
+    commentID = await likeCommentStore.postComment(
       commentInput.value,
       props.post.document.postID,
-      props.post.user
+      userStore.user
     );
 
   commentInput.value = "";
+
+  // update comment
+  updateComment(commentID);
+}
+
+// emit update comment to component at post vue
+function updateComment(commentID) {
+  emit("updateComment", commentID);
 }
 </script>
 

@@ -27,17 +27,27 @@
   </article>
 
   <!--Main Post Content-->
-  <article v-else class="w-full p-2 flex flex-col gap-4 rounded bg-gray-50 fade mb-5">
-    <div id="container" class="w-3/4 mx-auto">
+  <article v-else class="w-full p-5 flex flex-col gap-4 rounded bg-gray-50 fade mb-5">
+    <div id="container" class="w-3/4 mx-auto max-[600px]:w-full">
       <!--post header-->
       <div id="header" class="flex gap-2 items-center mb-3">
         <div class="w-16 h-16">
           <img :src="profileDp" alt="" class="rounded-full" />
         </div>
         <div>
-          <h4 class="flex-1 font-semibold text-md md:text-xl">{{ firstName }} {{ surname }}</h4>
+          <router-link
+            :to="
+              post.document.userID !== userStore.uid
+                ? { name: 'discover-profile', params: { profile_id: profileID } }
+                : { name: 'profile' }
+            "
+          >
+            <h4 class="flex-1 font-semibold cursor-pointer hover:text-blue-600 text-md md:text-xl">
+              {{ firstName }} {{ surname }}
+            </h4>
+          </router-link>
           <p class="text-xs md:text-sm font-semibold text-gray-400">
-            {{ post.date }}
+            {{ postTime }}
           </p>
         </div>
       </div>
@@ -89,25 +99,21 @@
 
       <!--buttons-->
       <div class="flex gap-4">
-        <button
-          class="inline-block text-center rounded flex-1 text-black"
-          :class="
-            post.document.likes.indexOf(userStore.uid) != -1
-              ? 'bg-blue-500 hover:bg-blue-700'
-              : 'bg-gray-200 hover:bg-gray-400'
-          "
-          @click.prevent="likePost"
-        >
-          {{ post.document.likes.length }} <i class="far fa-thumbs-up fa-lg"></i>
+        <button class="inline-block text-center rounded flex-1" @click.prevent="likePost">
+          <i class="far fa-thumbs-up fa-lg"></i>
         </button>
         <button class="inline-block text-center bg-gray-200 hover:bg-gray-200 rounded flex-1">
-          <!-- {{ post.document.comments.length }} <i class="fas fa-comments"></i> -->
+          {{ comments.length }} <i class="fas fa-comments"></i>
         </button>
       </div>
 
       <!--comment-->
       <div>
-        <PostComments />
+        <CreatePostComment :post="post" @updateComment="(commentID) => updateComment(commentID)" />
+      </div>
+
+      <div v-if="comments.length > 0">
+        <postComments v-for="comment in comments" :key="comment.commentID" :comment="comment" />
       </div>
     </div>
   </article>
@@ -116,17 +122,37 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import PostComments from "./CreatePostComment.vue";
+import { computed, ref, onMounted } from "vue";
+import CreatePostComment from "./CreatePostComment.vue";
+import postComments from "./postComments.vue";
+import { getFirestore, collection, query, where, getDocs, Timestamp } from "firebase/firestore";
+import firebase from "@/includes/firebase";
 import { useViewImagesStore } from "@/stores/viewImageStore";
 import { useUserStore } from "@/stores/userStore";
-import { usePostStore } from "@/stores/postStore";
+import { useLikeCommentStore } from "@/stores/likeCommentStore";
+
 const viewImagesStore = useViewImagesStore();
-
 const userStore = useUserStore();
-const postStore = usePostStore();
+const likeCommentStore = useLikeCommentStore();
+const comments = ref([]);
+const timeStamp = new Timestamp();
+const props = defineProps(["post", "loading", "dp", "firstName", "surname", "profileID", "gender"]);
 
-const props = defineProps(["post", "loading", "dp", "firstName", "surname", "gender"]);
+onMounted(async () => {
+  if (props.post) {
+    likeCommentStore.getComments(props.post.document.postID, comments.value);
+  }
+});
+
+const postTime = computed(() => {
+  timeStamp.seconds = props.post.document.date.seconds;
+  timeStamp.nanoseconds = props.post.document.date.nanoseconds;
+  const date = timeStamp.toDate().toDateString();
+
+  const time = timeStamp.toDate().toLocaleTimeString();
+
+  return `${date}, ${time}`;
+});
 
 const profileDp = computed(() => {
   if (!props.dp && props.gender == "female") {
@@ -139,17 +165,18 @@ const profileDp = computed(() => {
 });
 
 async function likePost() {
-  await postStore.likePost(props.post.document.likes, props.post.document.postID, userStore.uid);
+  await likeCommentStore.likePost(props.post.document.postID, userStore.user);
+}
+
+async function updateComment(commentID) {
+  await likeCommentStore.listenForComments(props.post.document.postID, commentID, comments.value);
 }
 </script>
 
 <style scoped>
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(200px, 1fr)
-  ); /* Adjust the minimum and maximum width as needed */
+  grid-template-columns: repeat(2, 1fr); /* Adjust the minimum and maximum width as needed */
   gap: 0.5rem; /* Adjust the gap between images as needed */
 }
 
@@ -183,19 +210,14 @@ async function likePost() {
   object-fit: cover; /* Crop and scale images to fit the grid item */
 }
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
   .photo-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Adjust the minimum and maximum width as needed */
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(120px, 1fr)
+    ); /* Adjust the minimum and maximum width as needed */
     gap: 0.5rem; /* Adjust the gap between images as needed */
-  }
-}
-
-@media (max-width: 300px) {
-  .photo-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
   }
 }
 </style>
