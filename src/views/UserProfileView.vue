@@ -165,12 +165,12 @@ const dp = computed(() => {
 
 onBeforeMount(async () => {
   load.value = true;
-  const profileId = route.params.profile_id;
+  const profileID = route.params.profile_id;
   const db = getFirestore(firebase);
   const storage = getStorage();
 
   // get user
-  const q = query(collection(db, "users"), where("profile_id", "==", profileId));
+  const q = query(collection(db, "users"), where("profileID", "==", profileID));
 
   const querySnapshot = await getDocs(q);
 
@@ -180,12 +180,12 @@ onBeforeMount(async () => {
   }
 
   //check is friends
-  await friendStore.checkFriends(userProfile.value.user_id, isFriend, userStore);
+  await friendStore.checkFriends(userProfile.value.userID, isFriend, userStore);
 
   // get user post with user id
   const ref = query(
     collection(db, "posts"),
-    where("userID", "==", userProfile.value.user_id),
+    where("userID", "==", userProfile.value.userID),
     orderBy("time", "desc")
   );
 
@@ -216,7 +216,7 @@ onBeforeMount(async () => {
 
   //check if user is in friendReq list from every user end
 
-  const requestsRef = collection(db, "users", userProfile.value.user_id, "friendReq");
+  const requestsRef = collection(db, "users", userProfile.value.userID, "friendReq");
 
   const requestsRef2 = collection(db, "users", userStore.uid, "friendReq");
 
@@ -243,13 +243,13 @@ onBeforeMount(async () => {
 
   // Get user friends
 
-  const friendsRef = collection(db, "users", userProfile.value.user_id, "friends");
+  const friendsRef = collection(db, "users", userProfile.value.userID, "friends");
 
   const snapshot = await getDocs(friendsRef);
 
   for (let doc of snapshot.docs) {
     const document = doc.data();
-    friends.value.push(document.user_id);
+    friends.value.push(document.userID);
   }
 
   const usersRef = collection(db, "users");

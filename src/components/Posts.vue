@@ -99,10 +99,19 @@
 
       <!--buttons-->
       <div class="flex gap-4">
-        <button class="inline-block text-center rounded flex-1" @click.prevent="likePost">
-          <i class="far fa-thumbs-up fa-lg"></i>
+        <button
+          ref="updateLikeBtnClass"
+          class="inline-block text-center rounded flex-1"
+          :class="
+            likeID
+              ? 'bg-blue-500 text-white hover:bg-blue-700'
+              : 'bg-gray-200 text-black hover:bg-gray-400'
+          "
+          @click.prevent="likeID ? unlikePost : likePost"
+        >
+          {{ likes.length }} <i class="far fa-thumbs-up fa-lg"></i>
         </button>
-        <button class="inline-block text-center bg-gray-200 hover:bg-gray-200 rounded flex-1">
+        <button class="inline-block text-center bg-gray-200 hover:bg-gray-400 rounded flex-1">
           {{ comments.length }} <i class="fas fa-comments"></i>
         </button>
       </div>
@@ -125,22 +134,33 @@
 import { computed, ref, onMounted } from "vue";
 import CreatePostComment from "./CreatePostComment.vue";
 import postComments from "./postComments.vue";
-import { getFirestore, collection, query, where, getDocs, Timestamp } from "firebase/firestore";
-import firebase from "@/includes/firebase";
+import { Timestamp } from "firebase/firestore";
 import { useViewImagesStore } from "@/stores/viewImageStore";
 import { useUserStore } from "@/stores/userStore";
 import { useLikeCommentStore } from "@/stores/likeCommentStore";
 
+//stores
 const viewImagesStore = useViewImagesStore();
 const userStore = useUserStore();
 const likeCommentStore = useLikeCommentStore();
+
+//data
 const comments = ref([]);
+const likes = ref([]);
+const likeID = ref(null);
+const updateLikeBtnClass = ref(null);
+
+//firebase instance
 const timeStamp = new Timestamp();
+
+// props
 const props = defineProps(["post", "loading", "dp", "firstName", "surname", "profileID", "gender"]);
 
 onMounted(async () => {
   if (props.post) {
-    likeCommentStore.getComments(props.post.document.postID, comments.value);
+    await likeCommentStore.getComments(props.post.document.postID, comments.value);
+
+    await likeCommentStore.getLikes(props.post.document.postID, likes.value);
   }
 });
 
@@ -165,7 +185,16 @@ const profileDp = computed(() => {
 });
 
 async function likePost() {
-  await likeCommentStore.likePost(props.post.document.postID, userStore.user);
+  likeID.value = await likeCommentStore.likePost(props.post.document.postID, userStore.user);
+
+  await likeCommentStore.listenForLikes(props.post.document.postID, likeID.value, likes.value);
+
+  updateLikeBtnClass.value.className =
+    "inline-block text-center rounded flex-1 bg-blue-500 text-white hover:bg-blue-700";
+}
+
+async function unlikePost() {
+  await likeCommentStore.unlikePost(props.post.document.postID, likeID.value);
 }
 
 async function updateComment(commentID) {

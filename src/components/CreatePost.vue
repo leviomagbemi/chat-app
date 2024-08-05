@@ -77,8 +77,8 @@
         </div>
         <button
           class="w-full rounded text-white font-semibold my-3 py-3"
-          :disabled="postText == '' ? 'true' : 'false'"
-          :class="postText == '' ? 'bg-grey-600' : 'bg-blue-600'"
+          :disabled="postText == '' ? true : false"
+          :class="postText == '' ? 'bg-gray-400' : 'bg-blue-600'"
         >
           Post
         </button>
