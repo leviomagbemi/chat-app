@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-auto bg-white rounded-md shadow-md p-5 md:w-1/2">
+  <div class="w-full h-auto m-auto bg-white rounded-md shadow-md p-5 md:w-1/2">
     <div
       v-if="formAlertMessage !== ''"
       class="text-center py-3 rounded mb-3"
@@ -7,14 +7,8 @@
     >
       {{ formAlertMessage }}
     </div>
-    <div class="flex justify-between">
+    <div>
       <h1 class="text-4xl font-bold mb-5 rounded text-blue-600">Sign Up</h1>
-      <button
-        @click="closeSignupModal"
-        class="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-400"
-      >
-        Close <i class="fas fa-times"></i>
-      </button>
     </div>
     <hr class="my-3" />
     <VeeForm @submit="register" :validation-schema="schema" id="form">
@@ -93,7 +87,8 @@
         </i>
       </button>
     </VeeForm>
-  </div>
+  
+</div>
 </template>
 
 <script setup>
@@ -108,12 +103,6 @@ const formAlertMessage = ref("");
 const formAlertClass = ref("bg-green-300 text-white");
 const userStore = useUserStore();
 
-//event emits
-const emit = defineEmits(["loginModal"]);
-
-function closeSignupModal() {
-  emit("loginModal");
-}
 
 const schema = {
   email: "required|email",

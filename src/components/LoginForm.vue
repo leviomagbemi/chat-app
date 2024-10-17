@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full bg-white rounded-md shadow-md p-5 md:w-1/2">
+  <div class="w-full h-auto bg-white rounded-md shadow-md p-5 md:w-1/2">
     <div v-if="formAlertMessage !== ''" class="text-center py-3 rounded" :class="formAlertClass">
       {{ formAlertMessage }}
     </div>
@@ -23,13 +23,14 @@
         <hr class="my-3" />
       </div>
     </VeeForm>
+   <router-link :to="{ name: 'signup' }">
     <button
-      @click="OpenSignupModal"
       type="button"
       class="w-full py-3 bg-cyan-600 rounded-md font-bold text-white text-xl hover:bg-cyan-800"
     >
       Sign Up
     </button>
+  </router-link>
   </div>
 </template>
 
@@ -45,12 +46,6 @@ const user = useUserStore();
 const router = useRouter();
 const formAlertMessage = ref("");
 const formAlertClass = ref("bg-green-300 text-white");
-
-const emit = defineEmits(["signUpModal"]);
-
-function OpenSignupModal() {
-  emit("signUpModal");
-}
 
 const schema = {
   email: "required|email",

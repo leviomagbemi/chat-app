@@ -2,7 +2,7 @@
   <AppHeader
     @toggleMenu="toggleMenu"
     class="sticky top-0 z-10"
-    v-if="$route.path !== '/login' && $route.path !== '/register'"
+    v-if="$route.path !== '/login' && $route.path !== '/signup'"
     :user="userStore.user"
     :friends="friends.length"
     :notifications="notifications.length"
